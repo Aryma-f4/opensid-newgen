@@ -1,8 +1,4 @@
-import test from "node:test"
-import assert from "node:assert/strict"
-import { mapRoute } from "../src/lib/adminRouteRegistry"
-
-const existingPageAliases = {
+const LEGACY_ROUTE_MAP: Record<string, string> = {
   "gis/clear": "/gis",
   "laporan_rentan/clear": "/laporan_rentan",
   "vaksin_covid/clear": "/vaksin_covid",
@@ -23,14 +19,9 @@ const existingPageAliases = {
   data_persil: "/data_persil",
   analisis_master: "/analisis/master",
   "menu/clear": "/menu"
-} as const
+}
 
-test("normalizes every active alias whose page already exists", () => {
-  for (const [legacyUrl, route] of Object.entries(existingPageAliases)) {
-    assert.equal(mapRoute(legacyUrl), route, legacyUrl)
-  }
-})
-
-test("preserves unknown URLs for filesystem auditing", () => {
-  assert.equal(mapRoute("plugin"), "/plugin")
-})
+export function mapRoute(url: string | null): string | null {
+  if (!url) return null
+  return LEGACY_ROUTE_MAP[url] ?? `/${url}`
+}
