@@ -34,3 +34,11 @@ test("normalizes every active alias whose page already exists", () => {
 test("preserves unknown URLs for filesystem auditing", () => {
   assert.equal(mapRoute("plugin"), "/plugin")
 })
+
+test("returns null for a null URL", () => {
+  assert.equal(mapRoute(null), null)
+})
+
+test("returns null for an empty URL", () => {
+  assert.equal(mapRoute(""), null)
+})
