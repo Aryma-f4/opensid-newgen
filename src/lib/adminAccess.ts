@@ -43,12 +43,12 @@ export function createRequireAdminAccess({ auth, prisma }: AdminAccessDependenci
 
     if (!user) accessDenied()
 
-    const module = await prisma.setting_modul.findFirst({
+    const accessModule = await prisma.setting_modul.findFirst({
       where: { config_id: user.config_id, url: moduleUrl },
       select: { id: true },
     })
 
-    if (!module) accessDenied()
+    if (!accessModule) accessDenied()
 
     const superAdmin = await prisma.user.findFirst({
       where: {
@@ -67,7 +67,7 @@ export function createRequireAdminAccess({ auth, prisma }: AdminAccessDependenci
         where: {
           config_id: user.config_id,
           id_grup: user.id_grup,
-          id_modul: module.id,
+          id_modul: accessModule.id,
         },
         select: { akses: true },
       })
