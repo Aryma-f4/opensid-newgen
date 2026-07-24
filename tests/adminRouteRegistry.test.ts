@@ -1,6 +1,7 @@
 import assert from "node:assert/strict"
+import { execFileSync } from "node:child_process"
 import { existsSync } from "node:fs"
-import { join } from "node:path"
+import { join, relative } from "node:path"
 import test from "node:test"
 import { LEGACY_ROUTE_MAP, mapRoute } from "../src/lib/adminRouteRegistry"
 
@@ -107,7 +108,14 @@ test("matches the complete expected legacy route map", () => {
   assert.deepEqual(LEGACY_ROUTE_MAP, EXPECTED_LEGACY_ROUTE_MAP)
 })
 
-test("maps every expected alias to an existing admin page", () => {
+test("maps every expected alias to a Git-tracked admin page", () => {
+  const trackedAdminPages = new Set(
+    execFileSync("git", ["ls-files", "--cached", "--", "src/app/(admin)"], {
+      cwd: process.cwd(),
+      encoding: "utf8",
+    }).trim().split("\n"),
+  )
+
   for (const [legacyUrl, route] of Object.entries(EXPECTED_LEGACY_ROUTE_MAP)) {
     assert.equal(mapRoute(legacyUrl), route, legacyUrl)
 
@@ -119,7 +127,14 @@ test("maps every expected alias to an existing admin page", () => {
       route.slice(1),
       "page.tsx",
     )
+    const repoRelativePagePath = relative(process.cwd(), pagePath)
+
     assert.equal(existsSync(pagePath), true, `${legacyUrl} -> ${route}: ${pagePath}`)
+    assert.equal(
+      trackedAdminPages.has(repoRelativePagePath),
+      true,
+      `${legacyUrl} -> ${route}: ${repoRelativePagePath} is not in the Git index`,
+    )
   }
 })
 
