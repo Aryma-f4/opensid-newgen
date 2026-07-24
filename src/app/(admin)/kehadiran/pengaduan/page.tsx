@@ -1,38 +1,47 @@
-"use client"
+import { Box, ContentHeader, LteTable, Td, Th } from "@/components/admin/Ui"
+import { prisma } from "@/lib/prisma"
 
-import CrudManager from "@/components/admin/CrudManager"
+export const dynamic = "force-dynamic"
 
-type PengaduanRow = {
-  id: number
-  waktu: string
-  keterangan: string | null
-  status: boolean
-}
+export default async function Page() {
+  const rows = await prisma.kehadiran_pengaduan.findMany({
+    orderBy: { waktu: "desc" },
+    take: 100,
+  })
 
-export default function Page() {
   return (
-    <CrudManager<PengaduanRow>
-      title="Pengaduan Kehadiran"
-      endpoint="/api/kehadiran/pengaduan"
-      rowKey={(row) => row.id}
-      columns={[
-        {
-          key: "waktu",
-          label: "Waktu",
-          render: (row) => new Date(row.waktu).toLocaleString("id-ID"),
-        },
-        { key: "keterangan", label: "Keterangan", className: "max-w-xs truncate" },
-        {
-          key: "status",
-          label: "Status",
-          render: (row) => (row.status ? "Selesai" : "Belum selesai"),
-        },
-      ]}
-      fields={[
-        { name: "waktu", label: "Waktu", type: "text", required: true },
-        { name: "keterangan", label: "Keterangan", type: "text" },
-        { name: "status", label: "Selesai", type: "checkbox" },
-      ]}
-    />
+    <div>
+      <ContentHeader
+        title="Pengaduan Kehadiran"
+        breadcrumb={[{ label: "Kehadiran" }, { label: "Pengaduan" }]}
+      />
+      <Box title={`100 Pengaduan Terbaru (${rows.length})`} noPadding>
+        <LteTable
+          head={
+            <>
+              <Th>Waktu</Th>
+              <Th>Keterangan</Th>
+              <Th>Status</Th>
+            </>
+          }
+        >
+          {rows.length === 0 ? (
+            <tr>
+              <Td colSpan={3} className="py-8 text-center text-gray-400">
+                Tidak ada data
+              </Td>
+            </tr>
+          ) : (
+            rows.map((row) => (
+              <tr key={row.id}>
+                <Td>{row.waktu.toLocaleString("id-ID")}</Td>
+                <Td>{row.keterangan ?? "-"}</Td>
+                <Td>{row.status ? "Selesai" : "Belum selesai"}</Td>
+              </tr>
+            ))
+          )}
+        </LteTable>
+      </Box>
+    </div>
   )
 }

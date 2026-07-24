@@ -1,33 +1,63 @@
-"use client"
+import { Box, ContentHeader, LteTable, Td, Th } from "@/components/admin/Ui"
+import { prisma } from "@/lib/prisma"
 
-import CrudManager from "@/components/admin/CrudManager"
+export const dynamic = "force-dynamic"
 
-type PengajuanIzinRow = {
-  id: string
-  keterangan: string
-  tanggal_mulai: string
-  status_approval: string
-}
+export default async function Page() {
+  const rows = await prisma.kehadiran_pengajuan_izin.findMany({
+    include: {
+      tweb_desa_pamong: {
+        select: { pamong_nama: true },
+      },
+    },
+    orderBy: { id: "desc" },
+    take: 100,
+  })
 
-export default function Page() {
   return (
-    <CrudManager<PengajuanIzinRow>
-      title="Pengajuan Izin"
-      endpoint="/api/kehadiran/pengajuan_izin"
-      rowKey={(row) => row.id}
-      columns={[
-        { key: "keterangan", label: "Alasan" },
-        {
-          key: "tanggal_mulai",
-          label: "Mulai",
-          render: (row) => new Date(row.tanggal_mulai).toLocaleDateString("id-ID"),
-        },
-        { key: "status_approval", label: "Status" },
-      ]}
-      fields={[
-        { name: "keterangan", label: "Alasan", type: "text", required: true },
-        { name: "tanggal_mulai", label: "Mulai", type: "date", required: true },
-      ]}
-    />
+    <div>
+      <ContentHeader
+        title="Status Pengajuan Izin"
+        subtitle="Hanya baca"
+        breadcrumb={[{ label: "Kehadiran" }, { label: "Pengajuan Izin" }]}
+      />
+      <Box title={`100 Status Pengajuan Izin Terbaru (${rows.length})`} noPadding>
+        <p className="m-0 border-b border-[#f4f4f4] p-3 text-sm text-gray-600">
+          Halaman ini hanya menampilkan status pengajuan. Persetujuan dan
+          penolakan belum tersedia di OpenSID NewGen.
+        </p>
+        <LteTable
+          head={
+            <>
+              <Th>Perangkat</Th>
+              <Th>Jenis Izin</Th>
+              <Th>Mulai</Th>
+              <Th>Selesai</Th>
+              <Th>Keterangan</Th>
+              <Th>Status</Th>
+            </>
+          }
+        >
+          {rows.length === 0 ? (
+            <tr>
+              <Td colSpan={6} className="py-8 text-center text-gray-400">
+                Tidak ada data
+              </Td>
+            </tr>
+          ) : (
+            rows.map((row) => (
+              <tr key={row.id.toString()}>
+                <Td>{row.tweb_desa_pamong.pamong_nama ?? "-"}</Td>
+                <Td>{row.jenis_izin}</Td>
+                <Td>{row.tanggal_mulai.toLocaleDateString("id-ID")}</Td>
+                <Td>{row.tanggal_selesai.toLocaleDateString("id-ID")}</Td>
+                <Td>{row.keterangan}</Td>
+                <Td>{row.status_approval}</Td>
+              </tr>
+            ))
+          )}
+        </LteTable>
+      </Box>
+    </div>
   )
 }

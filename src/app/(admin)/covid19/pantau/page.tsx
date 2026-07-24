@@ -1,34 +1,55 @@
-"use client"
+import { Box, ContentHeader, LteTable, Td, Th } from "@/components/admin/Ui"
+import { prisma } from "@/lib/prisma"
 
-import CrudManager from "@/components/admin/CrudManager"
+export const dynamic = "force-dynamic"
 
-type Covid19PantauRow = {
-  id: number
-  suhu_tubuh: string | null
-  batuk: string | null
-  sesak_nafas: string | null
-}
+export default async function Page() {
+  const rows = await prisma.covid19_pantau.findMany({
+    orderBy: { id: "desc" },
+    take: 100,
+  })
 
-export default function Page() {
   return (
-    <CrudManager<Covid19PantauRow>
-      title="Covid-19 Pantau"
-      endpoint="/api/covid19/pantau"
-      rowKey={(row) => row.id}
-      columns={[
-        { key: "suhu_tubuh", label: "Suhu" },
-        { key: "batuk", label: "Batuk", render: (row) => row.batuk ?? "-" },
-        {
-          key: "sesak_nafas",
-          label: "Sesak Nafas",
-          render: (row) => row.sesak_nafas ?? "-",
-        },
-      ]}
-      fields={[
-        { name: "suhu_tubuh", label: "Suhu Tubuh", type: "text" },
-        { name: "batuk", label: "Batuk", type: "text" },
-        { name: "sesak_nafas", label: "Sesak Nafas", type: "text" },
-      ]}
-    />
+    <div>
+      <ContentHeader
+        title="Pemantauan Covid-19"
+        breadcrumb={[{ label: "Covid-19" }, { label: "Pantau" }]}
+      />
+      <Box title={`100 Data Pemantauan Terbaru (${rows.length})`} noPadding>
+        <LteTable
+          head={
+            <>
+              <Th>Waktu</Th>
+              <Th>Suhu Tubuh</Th>
+              <Th>Batuk</Th>
+              <Th>Flu</Th>
+              <Th>Sesak Nafas</Th>
+              <Th>Status Covid</Th>
+            </>
+          }
+        >
+          {rows.length === 0 ? (
+            <tr>
+              <Td colSpan={6} className="py-8 text-center text-gray-400">
+                Tidak ada data
+              </Td>
+            </tr>
+          ) : (
+            rows.map((row) => (
+              <tr key={row.id}>
+                <Td>{row.tanggal_jam?.toLocaleString("id-ID") ?? "-"}</Td>
+                <Td>
+                  {row.suhu_tubuh === null ? "-" : `${row.suhu_tubuh.toString()} °C`}
+                </Td>
+                <Td>{row.batuk ?? "-"}</Td>
+                <Td>{row.flu ?? "-"}</Td>
+                <Td>{row.sesak_nafas ?? "-"}</Td>
+                <Td>{row.status_covid ?? "-"}</Td>
+              </tr>
+            ))
+          )}
+        </LteTable>
+      </Box>
+    </div>
   )
 }
