@@ -9,6 +9,23 @@ export type LeaveInput = {
   keterangan: string
 }
 
+const leaveRequestErrorMessages = {
+  invalid_input: "Periksa jenis izin, tanggal, dan keterangan.",
+  invalid_request: "Pengajuan izin tidak valid.",
+  account_unlinked: "Akun tidak terhubung ke perangkat desa.",
+  access_denied: "Anda tidak memiliki izin untuk melakukan tindakan ini.",
+  cannot_change: "Pengajuan izin tidak dapat diubah.",
+  cannot_delete: "Pengajuan izin tidak dapat dihapus.",
+  save_failed: "Pengajuan izin tidak dapat disimpan. Silakan coba lagi.",
+  delete_failed: "Pengajuan izin tidak dapat dihapus. Silakan coba lagi.",
+} as const
+
+export type LeaveRequestErrorCode = keyof typeof leaveRequestErrorMessages
+
+export function leaveRequestErrorMessage(code: LeaveRequestErrorCode): string {
+  return leaveRequestErrorMessages[code]
+}
+
 function readText(formData: FormData, name: string): string {
   const value = formData.get(name)
   return typeof value === "string" ? value.trim() : ""

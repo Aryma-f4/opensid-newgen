@@ -3,6 +3,7 @@
 import { useState } from "react"
 
 import { Box, Btn, ContentHeader, LteTable, Td, Th } from "@/components/admin/Ui"
+import { leaveRequestErrorMessage } from "@/lib/kehadiranLeave"
 
 import { createLeaveRequest, deleteLeaveRequest, updateLeaveRequest } from "./actions"
 
@@ -75,12 +76,17 @@ export default function LeaveRequestManager({ rows }: { rows: LeaveRequestRow[] 
     setSaving(true)
     setError("")
     try {
-      if (mode === "edit") await updateLeaveRequest(formData)
-      else await createLeaveRequest(formData)
+      const result = mode === "edit"
+        ? await updateLeaveRequest(formData)
+        : await createLeaveRequest(formData)
+      if (!result.success) {
+        setError(leaveRequestErrorMessage(result.error))
+        return
+      }
       setMode(null)
       setEditing(null)
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Pengajuan izin gagal disimpan.")
+    } catch {
+      setError(leaveRequestErrorMessage("save_failed"))
     } finally {
       setSaving(false)
     }
@@ -94,9 +100,10 @@ export default function LeaveRequestManager({ rows }: { rows: LeaveRequestRow[] 
     try {
       const formData = new FormData()
       formData.set("request_id", row.id)
-      await deleteLeaveRequest(formData)
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Pengajuan izin gagal dihapus.")
+      const result = await deleteLeaveRequest(formData)
+      if (!result.success) setError(leaveRequestErrorMessage(result.error))
+    } catch {
+      setError(leaveRequestErrorMessage("delete_failed"))
     } finally {
       setDeletingId(null)
     }

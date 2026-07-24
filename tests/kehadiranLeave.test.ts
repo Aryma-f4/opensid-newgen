@@ -1,7 +1,12 @@
 import assert from "node:assert/strict"
 import test from "node:test"
 
-import { canChangePending, leaveDates, parseLeaveInput } from "../src/lib/kehadiranLeave"
+import {
+  canChangePending,
+  leaveDates,
+  leaveRequestErrorMessage,
+  parseLeaveInput,
+} from "../src/lib/kehadiranLeave"
 
 test("requires a leave type", () => {
   assert.throws(() => parseLeaveInput(new FormData()), /Jenis izin/)
@@ -67,4 +72,10 @@ test("allows pending requests to change but rejects non-pending requests", () =>
   assert.equal(canChangePending("pending"), true)
   assert.equal(canChangePending("approved"), false)
   assert.equal(canChangePending("rejected"), false)
+})
+
+test("maps stable leave action errors to localized messages", () => {
+  assert.equal(leaveRequestErrorMessage("invalid_input"), "Periksa jenis izin, tanggal, dan keterangan.")
+  assert.equal(leaveRequestErrorMessage("access_denied"), "Anda tidak memiliki izin untuk melakukan tindakan ini.")
+  assert.equal(leaveRequestErrorMessage("save_failed"), "Pengajuan izin tidak dapat disimpan. Silakan coba lagi.")
 })
