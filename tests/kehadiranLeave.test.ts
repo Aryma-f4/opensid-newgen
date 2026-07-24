@@ -1,7 +1,7 @@
 import assert from "node:assert/strict"
 import test from "node:test"
 
-import { leaveDates, parseLeaveInput } from "../src/lib/kehadiranLeave"
+import { canChangePending, leaveDates, parseLeaveInput } from "../src/lib/kehadiranLeave"
 
 test("requires a leave type", () => {
   assert.throws(() => parseLeaveInput(new FormData()), /Jenis izin/)
@@ -22,11 +22,22 @@ test("parses allowed leave input and trims its note", () => {
   assert.equal(input.keterangan, "Perjalanan keluarga")
 })
 
+test("requires a nonempty leave note after trimming", () => {
+  const formData = new FormData()
+  formData.set("jenis_izin", "izin")
+  formData.set("tanggal_mulai", "2026-07-24")
+  formData.set("tanggal_selesai", "2026-07-24")
+  formData.set("keterangan", "   ")
+
+  assert.throws(() => parseLeaveInput(formData), /Keterangan/)
+})
+
 test("rejects invalid leave ranges", () => {
   const formData = new FormData()
   formData.set("jenis_izin", "izin")
   formData.set("tanggal_mulai", "2026-07-26")
   formData.set("tanggal_selesai", "2026-07-24")
+  formData.set("keterangan", "Tanggal keliru")
 
   assert.throws(() => parseLeaveInput(formData), /selesai/)
 })
@@ -36,6 +47,7 @@ test("parses early four-digit years without JavaScript's 1900 offset", () => {
   formData.set("jenis_izin", "izin")
   formData.set("tanggal_mulai", "0001-01-01")
   formData.set("tanggal_selesai", "0001-01-01")
+  formData.set("keterangan", "Tanggal awal")
 
   const input = parseLeaveInput(formData)
 
@@ -49,4 +61,10 @@ test("returns every date in an inclusive leave range", () => {
     ),
     ["2026-07-24", "2026-07-25", "2026-07-26"],
   )
+})
+
+test("allows pending requests to change but rejects non-pending requests", () => {
+  assert.equal(canChangePending("pending"), true)
+  assert.equal(canChangePending("approved"), false)
+  assert.equal(canChangePending("rejected"), false)
 })

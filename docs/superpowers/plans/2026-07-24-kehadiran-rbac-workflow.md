@@ -54,6 +54,10 @@ assert.equal(hasAccess(1, "u"), false)
 assert.equal(hasAccess(3, "u"), true)
 assert.equal(hasAccess(7, "h"), true)
 assert.throws(() => parseLeaveInput(new FormData()), /Jenis izin/)
+assert.throws(
+  () => parseLeaveInput(new FormData([["jenis_izin", "izin"], ["tanggal_mulai", "2026-07-24"], ["tanggal_selesai", "2026-07-24"], ["keterangan", "   "]])),
+  /Keterangan/,
+)
 assert.deepEqual(
   leaveDates(new Date("2026-07-24"), new Date("2026-07-26")).map((date) => date.toISOString().slice(0, 10)),
   ["2026-07-24", "2026-07-25", "2026-07-26"],
@@ -80,7 +84,7 @@ export function canChangePending(status: string) {
 }
 ```
 
-`requireAdminAccess` must call `auth()`, parse `session.user.id`, load `user` by primary key, resolve the actual super-admin as the first `user` in the same tenant whose joined `user_grup.slug` is `administrator` (matching legacy `User::superAdmin()->first()`), and otherwise load the exact `setting_modul` and `grup_akses` records for the user's group and tenant. It must throw `Error("Tidak memiliki akses.")` for an absent session, user, module, or insufficient level. `parseLeaveInput` must trim `keterangan`, accept only Prisma enum values `cuti`, `sakit`, `izin`, `dinas_luar_kota`, and `lainnya`, parse date-only `YYYY-MM-DD` values, reject an end before start, and cap the range at 366 days.
+`requireAdminAccess` must call `auth()`, parse `session.user.id`, load `user` by primary key, resolve the actual super-admin as the first `user` in the same tenant whose joined `user_grup.slug` is `administrator` (matching legacy `User::superAdmin()->first()`), and otherwise load the exact `setting_modul` and `grup_akses` records for the user's group and tenant. It must throw `Error("Tidak memiliki akses.")` for an absent session, user, module, or insufficient level. `parseLeaveInput` must trim and require nonempty `keterangan`, accept only Prisma enum values `cuti`, `sakit`, `izin`, `dinas_luar_kota`, and `lainnya`, parse date-only `YYYY-MM-DD` values, reject an end before start, and cap the range at 366 days.
 
 - [ ] **Step 4: Run helper tests and static types**
 

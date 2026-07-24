@@ -38,6 +38,9 @@ export function parseLeaveInput(formData: FormData): LeaveInput {
     throw new Error("Jenis izin tidak valid.")
   }
 
+  const keterangan = readText(formData, "keterangan")
+  if (!keterangan) throw new Error("Keterangan wajib diisi.")
+
   const tanggal_mulai = parseDateOnly(readText(formData, "tanggal_mulai"), "mulai")
   const tanggal_selesai = parseDateOnly(readText(formData, "tanggal_selesai"), "selesai")
   if (tanggal_selesai < tanggal_mulai) {
@@ -51,7 +54,7 @@ export function parseLeaveInput(formData: FormData): LeaveInput {
     jenis_izin: jenisIzin as kehadiran_pengajuan_izin_jenis_izin,
     tanggal_mulai,
     tanggal_selesai,
-    keterangan: readText(formData, "keterangan"),
+    keterangan,
   }
 }
 
