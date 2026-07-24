@@ -1658,6 +1658,7 @@ model kehadiran_perangkat_desa {
   config           config            @relation(fields: [config_id], references: [id], onDelete: Cascade, map: "kehadiran_perangkat_desa_config_fk")
   tweb_desa_pamong tweb_desa_pamong? @relation(fields: [pamong_id], references: [pamong_id], onDelete: Cascade, map: "kehadiran_perangkat_desa_pamong_fk")
 
+  @@unique([config_id, tanggal, pamong_id], map: "kehadiran_perangkat_desa_config_tanggal_pamong_unique")
   @@index([config_id], map: "kehadiran_perangkat_desa_config_fk")
   @@index([pamong_id], map: "kehadiran_perangkat_desa_pamong_fk")
 }
