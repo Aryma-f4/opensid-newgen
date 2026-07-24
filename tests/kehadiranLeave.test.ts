@@ -31,6 +31,17 @@ test("rejects invalid leave ranges", () => {
   assert.throws(() => parseLeaveInput(formData), /selesai/)
 })
 
+test("parses early four-digit years without JavaScript's 1900 offset", () => {
+  const formData = new FormData()
+  formData.set("jenis_izin", "izin")
+  formData.set("tanggal_mulai", "0001-01-01")
+  formData.set("tanggal_selesai", "0001-01-01")
+
+  const input = parseLeaveInput(formData)
+
+  assert.equal(input.tanggal_mulai.toISOString().slice(0, 10), "0001-01-01")
+})
+
 test("returns every date in an inclusive leave range", () => {
   assert.deepEqual(
     leaveDates(new Date("2026-07-24"), new Date("2026-07-26")).map((date) =>

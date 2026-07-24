@@ -19,7 +19,8 @@ function parseDateOnly(value: string, field: "mulai" | "selesai"): Date {
   if (!match) throw new Error(`Tanggal ${field} tidak valid.`)
 
   const [, year, month, day] = match
-  const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)))
+  const date = new Date(0)
+  date.setUTCFullYear(Number(year), Number(month) - 1, Number(day))
   if (
     date.getUTCFullYear() !== Number(year) ||
     date.getUTCMonth() !== Number(month) - 1 ||
