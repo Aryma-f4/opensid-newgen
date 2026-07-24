@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma"
 
+export { mapRoute } from "./adminRouteRegistry"
+
 export type Modul = {
   id: number
   modul: string
@@ -9,21 +11,6 @@ export type Modul = {
   urut: number | null
   parent: number
   children: Modul[]
-}
-
-// Route parity with original OpenSID: admin URL = "/" + CI controller url.
-// Only method-suffixed URLs (e.g. "menu/clear") need normalizing to their page route.
-const ROUTE_MAP: Record<string, string> = {
-  "menu/clear": "/menu",
-  "man_user/clear": "/man_user",
-  setting_web: "/setting",
-  "setting/aplikasi": "/setting",
-}
-
-export function mapRoute(url: string | null): string | null {
-  if (!url) return null
-  if (ROUTE_MAP[url]) return ROUTE_MAP[url]
-  return `/${url}`
 }
 
 export async function getAdminMenu(): Promise<Modul[]> {

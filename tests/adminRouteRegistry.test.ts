@@ -1,6 +1,6 @@
 import test from "node:test"
 import assert from "node:assert/strict"
-import { mapRoute } from "../src/lib/adminRouteRegistry"
+import { LEGACY_ROUTE_MAP, mapRoute } from "../src/lib/adminRouteRegistry"
 
 const existingPageAliases = {
   "gis/clear": "/gis",
@@ -27,6 +27,12 @@ const existingPageAliases = {
 
 test("normalizes every active alias whose page already exists", () => {
   for (const [legacyUrl, route] of Object.entries(existingPageAliases)) {
+    assert.equal(mapRoute(legacyUrl), route, legacyUrl)
+  }
+})
+
+test("normalizes every registry entry", () => {
+  for (const [legacyUrl, route] of Object.entries(LEGACY_ROUTE_MAP)) {
     assert.equal(mapRoute(legacyUrl), route, legacyUrl)
   }
 })
