@@ -97,11 +97,16 @@ const EXPECTED_LEGACY_ROUTE_MAP = {
   "gallery/clear": "/gallery",
   "program_bantuan/clear": "/program_bantuan",
   "opendk_pesan/clear": "/opendk_pesan",
+  "pengurus/clear": "/pengurus",
   data_persil: "/data_persil",
 } as const
 
 test("normalizes the OpenDK message clear route to its index page", () => {
   assert.equal(mapRoute("opendk_pesan/clear"), "/opendk_pesan")
+})
+
+test("normalizes the Pengurus clear route to its index page", () => {
+  assert.equal(mapRoute("pengurus/clear"), "/pengurus")
 })
 
 test("matches the complete expected legacy route map", () => {
