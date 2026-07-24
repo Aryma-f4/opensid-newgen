@@ -1,0 +1,524 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-primary: #1e3a5f;
+  --color-primary-light: #2563eb;
+  --color-secondary: #059669;
+  /* AdminLTE 2 bootstrap palette (original OpenSID admin) */
+  --color-lte-primary: #3c8dbc;
+  --color-lte-success: #00a65a;
+  --color-lte-info: #00c0ef;
+  --color-lte-warning: #f39c12;
+  --color-lte-danger: #dd4b39;
+}
+
+/*
+ * AdminLTE 2 skins — same palette as original OpenSID admin.
+ * Skin class comes from DB setting `warna_tema_admin` (default skin-purple).
+ */
+.lte {
+  --lte-navbar: #605ca8;
+  --lte-navbar-text: #ffffff;
+  --lte-logo: #555299;
+  --lte-accent: #605ca8;
+  --lte-sidebar-bg: #222d32;
+  --lte-sidebar-text: #b8c7ce;
+  --lte-sidebar-hover: #1e282c;
+  --lte-submenu-bg: #2c3b41;
+  --lte-content-bg: #ecf0f5;
+}
+.skin-blue   { --lte-navbar: #3c8dbc; --lte-logo: #367fa9; --lte-accent: #3c8dbc; }
+.skin-purple { --lte-navbar: #605ca8; --lte-logo: #555299; --lte-accent: #605ca8; }
+.skin-green  { --lte-navbar: #00a65a; --lte-logo: #008d4c; --lte-accent: #00a65a; }
+.skin-red    { --lte-navbar: #dd4b39; --lte-logo: #d33724; --lte-accent: #dd4b39; }
+.skin-yellow { --lte-navbar: #f39c12; --lte-logo: #e08e0b; --lte-accent: #f39c12; }
+.skin-black  { --lte-navbar: #ffffff; --lte-navbar-text: #333333; --lte-logo: #ffffff; --lte-accent: #ffffff; }
+.skin-blue-light, .skin-purple-light, .skin-green-light, .skin-red-light, .skin-yellow-light, .skin-black-light {
+  --lte-sidebar-bg: #f9fafc;
+  --lte-sidebar-text: #444444;
+  --lte-sidebar-hover: #f4f4f5;
+  --lte-submenu-bg: #f4f4f5;
+}
+.skin-blue-light   { --lte-navbar: #3c8dbc; --lte-logo: #367fa9; --lte-accent: #3c8dbc; }
+.skin-purple-light { --lte-navbar: #605ca8; --lte-logo: #555299; --lte-accent: #605ca8; }
+.skin-green-light  { --lte-navbar: #00a65a; --lte-logo: #008d4c; --lte-accent: #00a65a; }
+.skin-red-light    { --lte-navbar: #dd4b39; --lte-logo: #d33724; --lte-accent: #dd4b39; }
+.skin-yellow-light { --lte-navbar: #f39c12; --lte-logo: #e08e0b; --lte-accent: #f39c12; }
+.skin-black-light  { --lte-navbar: #ffffff; --lte-navbar-text: #333333; --lte-logo: #ffffff; --lte-accent: #ffffff; }
+
+/* AdminLTE table striping + hover (mimics .table-striped .table-hover) */
+.lte-table tbody tr:nth-child(odd) { background-color: #f9f9f9; }
+.lte-table tbody tr:hover { background-color: #f0f0f0; }
+
+/* AdminLTE body font stack */
+.lte { font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif; }
+
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
+/* Newgen admin shell: functional without AdminLTE jQuery. */
+.admin-shell {
+  min-height: 100vh;
+  background: #ecf0f5;
+  color: #263238;
+}
+
+.admin-shell .wrapper {
+  height: auto;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: visible;
+  background: #ecf0f5;
+}
+
+.admin-shell.fixed .wrapper {
+  height: auto;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+
+.admin-shell .main-header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 56px;
+  z-index: 1030;
+  background: var(--lte-navbar);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .12);
+}
+
+.admin-shell .main-header .logo {
+  width: 280px;
+  height: 56px;
+  line-height: 56px;
+  background: var(--lte-logo);
+  color: var(--lte-navbar-text, #fff);
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.admin-shell .main-header .navbar {
+  min-height: 56px;
+  margin-left: 280px;
+  background: var(--lte-navbar);
+  color: var(--lte-navbar-text, #fff);
+}
+
+.admin-shell .main-header .sidebar-toggle {
+  width: 54px;
+  height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--lte-navbar-text, #fff);
+}
+
+.admin-shell .main-header .sidebar-toggle:before {
+  content: "\f0c9";
+  font-family: FontAwesome;
+  font-size: 18px;
+}
+
+.admin-shell .navbar-custom-menu > .nav {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  margin: 0;
+}
+
+.admin-shell .navbar-custom-menu > .nav > li > a {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--lte-navbar-text, #fff);
+}
+
+.admin-shell .navbar-custom-menu .dropdown-menu {
+  border: 0;
+  border-radius: 8px;
+  box-shadow: 0 14px 32px rgba(15, 23, 42, .18);
+}
+
+.admin-shell .main-sidebar {
+  position: fixed;
+  top: 56px;
+  bottom: 0;
+  left: 0;
+  width: 280px;
+  z-index: 1020;
+  overflow: hidden;
+  background: var(--lte-sidebar-bg);
+  color: var(--lte-sidebar-text);
+}
+
+.admin-shell .sidebar {
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 28px;
+  background: var(--lte-sidebar-bg);
+}
+
+.admin-shell .user-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 82px;
+  padding: 14px 16px;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, .06);
+}
+
+.admin-shell .user-panel:before,
+.admin-shell .user-panel:after {
+  display: none;
+}
+
+.admin-shell .user-panel .pull-left {
+  float: none !important;
+}
+
+.admin-shell .user-panel .image img,
+.admin-shell .user-panel .image .img-circle {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, .9);
+}
+
+.admin-shell .user-panel .info {
+  position: static;
+  left: auto;
+  padding: 0;
+  line-height: 1.2;
+  white-space: normal;
+}
+
+.admin-shell .sidebar-form {
+  margin: 14px;
+  border: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .08);
+}
+
+.admin-shell .sidebar-form input,
+.admin-shell .sidebar-form .btn {
+  height: 42px;
+  border: 0;
+  color: #fff;
+  background: rgba(255, 255, 255, .08);
+}
+
+.admin-shell .sidebar-form input::placeholder {
+  color: rgba(255, 255, 255, .58);
+}
+
+.admin-shell .sidebar-menu {
+  padding-bottom: 18px;
+}
+
+.admin-shell .sidebar-menu .header {
+  padding: 14px 18px 10px;
+  color: #7fa0ad;
+  background: rgba(0, 0, 0, .18);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.admin-shell .sidebar-menu > li > a,
+.admin-shell .treeview-menu > li > a {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 44px;
+  padding: 10px 16px 10px 18px;
+  color: var(--lte-sidebar-text);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: background-color .16s ease, color .16s ease, border-color .16s ease;
+}
+
+.admin-shell .sidebar-menu > li > a:hover,
+.admin-shell .sidebar-menu > li.active > a {
+  color: #fff;
+  background: var(--lte-sidebar-hover);
+  border-left-color: var(--lte-accent);
+}
+
+.admin-shell .sidebar-menu > li > a > .fa:first-child,
+.admin-shell .treeview-menu > li > a > .fa:first-child {
+  width: 18px;
+  text-align: center;
+  opacity: .9;
+}
+
+.admin-shell .pull-right-container {
+  margin-left: auto;
+}
+
+.admin-shell .treeview > a .pull-right {
+  transition: transform .18s ease;
+}
+
+.admin-shell .treeview.menu-open > a .pull-right {
+  transform: rotate(-90deg);
+}
+
+.admin-shell .treeview-menu {
+  margin: 0;
+  padding: 6px 0;
+  background: var(--lte-submenu-bg);
+}
+
+.admin-shell .treeview-menu > li > a {
+  min-height: 38px;
+  padding-left: 42px;
+  color: rgba(232, 243, 248, .82);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.admin-shell .treeview-menu > li > a:hover,
+.admin-shell .treeview-menu > li.active > a {
+  color: #fff;
+  background: rgba(255, 255, 255, .06);
+}
+
+.admin-shell .content-wrapper {
+  min-height: calc(100vh - 108px);
+  margin-left: 280px;
+  padding-top: 56px;
+  background: #ecf0f5;
+}
+
+.admin-shell #maincontent.content {
+  min-height: calc(100vh - 160px);
+  padding: 24px;
+}
+
+.admin-shell .content-header {
+  margin: -24px -24px 20px;
+  padding: 20px 24px;
+  background: #fff;
+  border-bottom: 1px solid #d9e2ea;
+}
+
+.admin-shell .box,
+.admin-shell .small-box,
+.admin-shell .public-card {
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
+}
+
+.admin-shell .main-footer {
+  min-height: 52px;
+  margin-left: 280px;
+  padding: 16px 24px;
+  background: #fff;
+  border-top: 1px solid #d9e2ea;
+  color: #4b5563;
+}
+
+.admin-shell.sidebar-collapsed .main-header .logo,
+.admin-shell.sidebar-collapsed .main-sidebar {
+  width: 68px;
+}
+
+.admin-shell.sidebar-collapsed .main-header .navbar,
+.admin-shell.sidebar-collapsed .content-wrapper,
+.admin-shell.sidebar-collapsed .main-footer {
+  margin-left: 68px;
+}
+
+.admin-shell.sidebar-collapsed .logo-lg,
+.admin-shell.sidebar-collapsed .user-panel .info,
+.admin-shell.sidebar-collapsed .sidebar-form,
+.admin-shell.sidebar-collapsed .sidebar-menu .header,
+.admin-shell.sidebar-collapsed .sidebar-menu span:not(.pull-right-container),
+.admin-shell.sidebar-collapsed .pull-right-container {
+  display: none !important;
+}
+
+.admin-shell.sidebar-collapsed .logo-mini {
+  display: inline !important;
+}
+
+.admin-shell.sidebar-collapsed .user-panel {
+  justify-content: center;
+  padding: 12px 8px;
+}
+
+.admin-shell.sidebar-collapsed .sidebar-menu > li > a {
+  justify-content: center;
+  padding: 12px 8px;
+}
+
+.admin-shell.sidebar-collapsed .sidebar-menu > li > a > .fa:first-child {
+  width: auto;
+  font-size: 17px;
+}
+
+.admin-shell.sidebar-collapsed .treeview-menu {
+  display: none !important;
+}
+
+@media (max-width: 991px) {
+  .admin-shell .main-header .logo {
+    width: 220px;
+  }
+
+  .admin-shell .main-header .navbar,
+  .admin-shell .content-wrapper,
+  .admin-shell .main-footer {
+    margin-left: 220px;
+  }
+
+  .admin-shell .main-sidebar {
+    width: 220px;
+  }
+}
+
+/* Responsive grid: auto-cols for small screens, fixed cols for large */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 14px;
+}
+@media (min-width: 576px) {
+  .responsive-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 992px) {
+  .responsive-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Make small-box scale for mobile */
+@media (max-width: 575px) {
+  .small-box h3 { font-size: 1.6rem; }
+  .small-box p  { font-size: .82rem; }
+  .small-box .icon { font-size: 3rem !important; top: 6px !important; }
+}
+
+@media (max-width: 760px) {
+  .admin-shell .main-header {
+    position: sticky;
+    z-index: 1050;
+  }
+
+  /* Extra small: tighter layout */
+  @media (max-width: 480px) {
+    .admin-shell .main-header .logo {
+      width: 120px;
+      font-size: 15px;
+    }
+    .admin-shell .main-header .navbar {
+      margin-left: 120px;
+    }
+    .admin-shell .main-sidebar {
+      width: 260px;
+      left: -260px;
+    }
+    .admin-shell .user-panel .info { font-size: 13px; }
+    .admin-shell .user-panel { min-height: 64px; padding: 10px 14px; }
+    .admin-shell .user-panel .image img,
+    .admin-shell .user-panel .image .img-circle { width: 40px; height: 40px; }
+  }
+
+  .admin-shell .main-header .logo {
+    width: 150px;
+    font-size: 18px;
+  }
+
+  .admin-shell .main-header .navbar {
+    margin-left: 150px;
+  }
+
+  /* Mobile: sidebar hidden off-screen, slides in as overlay */
+  .admin-shell .main-sidebar {
+    position: fixed;
+    top: 56px;
+    left: -280px;
+    width: 280px;
+    height: calc(100vh - 56px);
+    z-index: 1040;
+    transition: left .28s ease;
+    box-shadow: none;
+  }
+
+  .admin-shell .main-sidebar .sidebar {
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  /* Backdrop overlay */
+  .admin-shell.sidebar-open::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.42);
+    z-index: 1035;
+  }
+
+  .admin-shell.sidebar-open .main-sidebar {
+    left: 0;
+    box-shadow: 4px 0 24px rgba(0,0,0,.18);
+  }
+
+  .admin-shell .content-wrapper,
+  .admin-shell .main-footer {
+    margin-left: 0;
+    padding-top: 0;
+  }
+
+  .admin-shell #maincontent.content {
+    padding: 14px;
+  }
+
+  @media (max-width: 480px) {
+    .admin-shell #maincontent.content {
+      padding: 10px;
+    }
+  }
+
+  /* Small screen sidebar content visibility */
+  .admin-shell.sidebar-open .main-sidebar {
+    left: 0;
+    box-shadow: 4px 0 24px rgba(0,0,0,.18);
+  }
+
+  .admin-shell .content-header {
+    margin: -14px -14px 14px;
+    padding: 16px 14px;
+  }
+
+  /* Table responsive wrapper */
+  .table-responsive-mobile {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-responsive-mobile table {
+    min-width: 600px;
+  }
+
+  /* Compact cards on mobile */
+  .admin-shell .box,
+  .admin-shell .small-box {
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(15,23,42,.06);
+  }
+
+  /* Ensure sidebar-collapsed still hides sidebar on mobile */
+  .admin-shell.sidebar-collapsed .main-sidebar {
+    left: -280px;
+  }
+}
