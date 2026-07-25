@@ -61,6 +61,11 @@ const smallBoxClass = {
   blue: "bg-blue",
 }
 
+const smallBoxContainmentStyle = {
+  overflow: "hidden",
+  isolation: "isolate",
+} as const
+
 export function SmallBox({ value, label, icon, color, href }: {
   value: React.ReactNode
   label: string
@@ -69,7 +74,7 @@ export function SmallBox({ value, label, icon, color, href }: {
   href?: string
 }) {
   return (
-    <div className={`small-box ${smallBoxClass[color]}`}>
+    <div style={smallBoxContainmentStyle} className={`small-box ${smallBoxClass[color]}`}>
       <div className="inner">
         <h3>{value}</h3>
         <p>{label}</p>
