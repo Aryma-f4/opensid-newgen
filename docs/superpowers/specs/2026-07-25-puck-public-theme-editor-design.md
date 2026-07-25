@@ -12,7 +12,7 @@ Provide a WordPress-style visual editor for every public OpenSID route while lea
 
 ## Theme Modes
 
-`theme_templates` gains an explicit renderer mode:
+The active `theme` record gains an explicit renderer mode:
 
 - `legacy`: reserved for the current default theme; continues to use `PublicSiteShell` and the existing route components.
 - `puck`: a custom visual theme; its public route layouts are rendered from Puck data.
@@ -24,12 +24,12 @@ Changing the active theme selects the renderer at the public-theme boundary. It 
 Create a tenant-scoped `theme_page_layouts` record with:
 
 - `config_id`
-- `template_id`
+- `theme_id`
 - `route_key` (for example `home`, `article-detail`, `category-list`, `layanan-mandiri`)
 - `puck_data` (JSON)
 - created/updated timestamps
 
-`template_id + route_key` is unique. Puck's JSON is stored as data, never compiled or evaluated as code. Existing `html_content`, `css_content`, and `js_content` stay readable for legacy records but are not executed by Puck themes.
+`theme_id + route_key` is unique. Puck's JSON is stored as data, never compiled or evaluated as code. Existing `theme_templates.html_content`, `css_content`, and `js_content` stay readable for legacy records but are not executed by Puck themes.
 
 ## Puck Configuration
 
