@@ -4411,22 +4411,104 @@ model teks_berjalan {
 }
 
 model theme {
-  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  config_id  Int
-  nama       String    @default("0") @db.VarChar(50)
-  slug       String?   @db.VarChar(60)
-  versi      String?   @db.VarChar(10)
-  sistem     Int       @default(0) @db.TinyInt
-  path       String    @default("") @db.VarChar(100)
-  status     Int       @default(0) @db.TinyInt
-  keterangan String?   @db.Text
-  opsi       String?   @db.Text
-  created_at DateTime? @db.Timestamp(0)
-  updated_at DateTime? @db.Timestamp(0)
-  config     config    @relation(fields: [config_id], references: [id], onDelete: Cascade, map: "theme_config_id_foreign")
+  id                 BigInt               @id @default(autoincrement()) @db.UnsignedBigInt
+  config_id          Int
+  nama               String               @default("0") @db.VarChar(50)
+  slug               String?              @db.VarChar(60)
+  renderer           theme_renderer       @default(legacy)
+  versi              String?              @db.VarChar(10)
+  sistem             Int                  @default(0) @db.TinyInt
+  path               String               @default("") @db.VarChar(100)
+  status             Int                  @default(0) @db.TinyInt
+  keterangan         String?              @db.Text
+  opsi               String?              @db.Text
+  created_at         DateTime?            @db.Timestamp(0)
+  updated_at         DateTime?            @db.Timestamp(0)
+  config             config               @relation(fields: [config_id], references: [id], onDelete: Cascade, map: "theme_config_id_foreign")
+  theme_page_layouts theme_page_layouts[]
 
   @@unique([slug, config_id], map: "theme_slug_config_id_unique")
   @@index([config_id], map: "theme_config_id_foreign")
+}
+
+model theme_page_layouts {
+  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  config_id  Int
+  theme_id   BigInt    @db.UnsignedBigInt
+  route_key  String    @db.VarChar(48)
+  puck_data  Json
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+  theme      theme     @relation(fields: [theme_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "theme_page_layouts_ibfk_1")
+
+  @@unique([theme_id, route_key], map: "idx_theme_route")
+  @@index([config_id], map: "idx_config")
+}
+
+model theme_regions {
+  id          Int       @id @default(autoincrement())
+  config_id   Int       @default(1)
+  template_id Int?
+  name        String    @db.VarChar(100)
+  label       String?   @db.VarChar(200)
+  description String?   @db.Text
+  max_widgets Int?      @default(10)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+
+  @@index([config_id], map: "idx_config")
+  @@index([template_id], map: "idx_template")
+}
+
+model theme_settings {
+  id            Int                          @id @default(autoincrement())
+  config_id     Int                          @default(1)
+  template_id   Int?
+  setting_key   String                       @db.VarChar(100)
+  setting_value String?                      @db.LongText
+  setting_type  theme_settings_setting_type? @default(text)
+  created_at    DateTime?                    @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?                    @default(now()) @db.Timestamp(0)
+
+  @@unique([template_id, setting_key], map: "idx_template_setting")
+  @@index([config_id], map: "idx_config")
+}
+
+model theme_templates {
+  id           Int                   @id @default(autoincrement())
+  config_id    Int                   @default(1)
+  name         String                @db.VarChar(100)
+  description  String?               @db.Text
+  type         theme_templates_type? @default(full)
+  html_content String?               @db.LongText
+  css_content  String?               @db.LongText
+  js_content   String?               @db.LongText
+  thumbnail    String?               @db.VarChar(255)
+  is_active    Boolean?              @default(false)
+  created_at   DateTime?             @default(now()) @db.Timestamp(0)
+  updated_at   DateTime?             @default(now()) @db.Timestamp(0)
+
+  @@index([config_id], map: "idx_config")
+}
+
+model theme_widgets {
+  id          Int                 @id @default(autoincrement())
+  config_id   Int                 @default(1)
+  template_id Int?
+  name        String              @db.VarChar(100)
+  widget_key  String              @unique(map: "widget_key") @db.VarChar(100)
+  type        theme_widgets_type? @default(html)
+  region      String?             @default("sidebar") @db.VarChar(100)
+  sort_order  Int?                @default(0)
+  title       String?             @db.VarChar(200)
+  content     String?             @db.LongText
+  settings    Json?
+  is_active   Boolean?            @default(true)
+  created_at  DateTime?           @default(now()) @db.Timestamp(0)
+  updated_at  DateTime?           @default(now()) @db.Timestamp(0)
+
+  @@index([config_id], map: "idx_config")
+  @@index([region], map: "idx_region")
+  @@index([template_id], map: "idx_template")
 }
 
 model tweb_aset {
@@ -5020,6 +5102,36 @@ enum kehadiran_pengajuan_izin_detail_jenis_izin {
 enum otp_token_channel {
   email
   telegram
+}
+
+enum theme_renderer {
+  legacy
+  puck
+}
+
+enum theme_templates_type {
+  full
+  header
+  footer
+  layout
+  widget
+}
+
+enum theme_settings_setting_type {
+  text
+  color
+  image
+  select
+  number
+}
+
+enum theme_widgets_type {
+  html
+  menu
+  article
+  statistic
+  social
+  custom
 }
 
 enum kehadiran_pengajuan_izin_detail_status {
