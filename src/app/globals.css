@@ -321,6 +321,11 @@
   box-shadow: 0 8px 24px rgba(15, 23, 42, .08);
 }
 
+.admin-shell .small-box {
+  overflow: hidden;
+  isolation: isolate;
+}
+
 .admin-shell .main-footer {
   min-height: 52px;
   margin-left: 280px;
