@@ -326,6 +326,11 @@
   isolation: isolate;
 }
 
+/* Compact only layouts whose direct children are dashboard summary cards. */
+.admin-shell :is(.grid, .flex):has(> .small-box) {
+  gap: .5rem;
+}
+
 .admin-shell .main-footer {
   min-height: 52px;
   margin-left: 280px;

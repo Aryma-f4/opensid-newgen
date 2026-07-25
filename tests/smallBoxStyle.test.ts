@@ -23,3 +23,10 @@ test("shared SmallBox enforces icon containment at the component boundary", () =
     /<div style=\{smallBoxContainmentStyle\} className=\{`small-box \$\{smallBoxClass\[color\]\}`\}>/,
   )
 })
+
+test("summary-card layouts use compact eight-pixel gaps", () => {
+  assert.match(
+    css,
+    /\.admin-shell :is\(\.grid, \.flex\):has\(> \.small-box\)\s*\{(?=[^}]*gap:\s*\.5rem)[^}]*\}/,
+  )
+})
