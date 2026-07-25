@@ -30,3 +30,14 @@ test("summary-card layouts use compact eight-pixel gaps", () => {
     /\.admin-shell :is\(\.grid, \.flex\):has\(> \.small-box\)\s*\{(?=[^}]*gap:\s*\.5rem)[^}]*\}/,
   )
 })
+
+test("summary-card icons stay inset and visible beside their content", () => {
+  assert.match(
+    css,
+    /\.admin-shell \.small-box \.icon\s*\{(?=[^}]*top:\s*12px)(?=[^}]*right:\s*18px)(?=[^}]*width:\s*64px)(?=[^}]*font-size:\s*64px)[^}]*\}/,
+  )
+  assert.match(
+    css,
+    /\.admin-shell \.small-box:hover \.icon\s*\{(?=[^}]*font-size:\s*68px)[^}]*\}/,
+  )
+})

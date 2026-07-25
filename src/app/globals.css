@@ -326,6 +326,19 @@
   isolation: isolate;
 }
 
+.admin-shell .small-box .icon {
+  top: 12px;
+  right: 18px;
+  width: 64px;
+  font-size: 64px;
+  line-height: 1;
+  text-align: center;
+}
+
+.admin-shell .small-box:hover .icon {
+  font-size: 68px;
+}
+
 /* Compact only layouts whose direct children are dashboard summary cards. */
 .admin-shell :is(.grid, .flex):has(> .small-box) {
   gap: .5rem;
