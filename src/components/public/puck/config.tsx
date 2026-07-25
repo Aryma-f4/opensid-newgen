@@ -13,9 +13,9 @@ for (const [name, render] of Object.entries(BLOCK_RENDERERS)) {
       return <div style={{ position: "relative" }}>{Comp(props)}</div>
     },
     fields: def.fields.map((f: any) => ({
-      type: f.type,
+      type: f.type === "textarea" ? "text" : f.type,
       name: f.name,
-      label: f.label,
+      label: f.label + (f.type === "textarea" ? " (JSON)" : ""),
       ...(f.options ? { options: f.options } : {}),
     })),
     defaultProps: def.fields.reduce((d: any, f: any) => {

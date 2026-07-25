@@ -85,28 +85,93 @@ function ButtonBlock({ text = "Tombol", href = "#", variant = "primary" }: Butto
 
 function SiteHeaderBlock(props: any) {
   const ctx = useCtx(props)
+  const { logo, namaDesa, sebutanKecamatan, namaKecamatan, namaKabupaten, showNav = true, menuItems: rawMenu = [] } = props
+  let items: any[] = []
+  try {
+    items = typeof rawMenu === "string" ? JSON.parse(rawMenu) : (Array.isArray(rawMenu) ? rawMenu : [])
+  } catch { items = (ctx.menu || []).slice(0, 6) }
+  if (items.length === 0) items = (ctx.menu || []).slice(0, 6)
+  const villageName = namaDesa || ctx.config.nama_desa || "OpenSID"
+  const kec = sebutanKecamatan || "Kec."
+  const kecName = namaKecamatan || ctx.config.nama_kecamatan
+  const kabName = namaKabupaten || ctx.config.nama_kabupaten
+
   return (
     <header style={{
       background: "linear-gradient(135deg, #18864d, #005a42)", color: "#fff",
-      padding: "20px 24px", borderRadius: "0 0 12px 12px", marginBottom: 16,
+      borderRadius: "0 0 12px 12px", marginBottom: 16,
     }}>
-      <h1 style={{ margin: 0, fontSize: 24 }}>{ctx.config.nama_desa || "OpenSID"}</h1>
-      {ctx.config.nama_kecamatan && (
-        <p style={{ margin: "4px 0 0", opacity: 0.8, fontSize: 13 }}>
-          Kec. {ctx.config.nama_kecamatan} · Kab. {ctx.config.nama_kabupaten}
-        </p>
+      <div style={{ padding: "20px 24px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {logo && <img src={logo} alt="" style={{ height: 48, width: 48, objectFit: "contain", borderRadius: 8, background: "#fff" }} />}
+          <div>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, letterSpacing: "-.02em" }}>{villageName}</h1>
+            {(kecName || kabName) && (
+              <p style={{ margin: "4px 0 0", opacity: 0.8, fontSize: 13, fontWeight: 600 }}>
+                {kecName ? `${kec} ${kecName}` : ""}{kecName && kabName ? " · " : ""}{kabName || ""}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+      {showNav && (
+        <nav style={{ display: "flex", gap: 4, padding: "4px 16px 12px", flexWrap: "wrap" }}>
+          {(items as any[]).map((item: any, i: number) => {
+            const hasSub = item.children && item.children.length > 0
+            return (
+              <div key={i} style={{ position: "relative", display: "inline-block" }}>
+                <a href={item.link || "#"} style={{
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  padding: "8px 14px", borderRadius: 8, fontSize: 13, fontWeight: 700,
+                  color: "#fff", textDecoration: "none",
+                  background: "rgba(255,255,255,.1)",
+                  transition: "background .18s, transform .18s",
+                }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,.2)"; e.currentTarget.style.transform = "translateY(-1px)" }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,.1)"; e.currentTarget.style.transform = "translateY(0)" }}
+                >
+                  {item.icon && <i className={`fa ${item.icon}`} style={{ fontSize: 14 }} />}
+                  <span>{item.text || item.nama}</span>
+                  {hasSub && <i className="fa fa-angle-down" style={{ fontSize: 12, opacity: 0.7 }} />}
+                </a>
+                {hasSub && (
+                  <div style={{
+                    position: "absolute", top: "100%", left: 0, minWidth: 200, paddingTop: 8,
+                    opacity: 0, visibility: "hidden", transition: "opacity .18s, visibility .18s",
+                  }}
+                    className="nav-submenu"
+                  >
+                    <div style={{
+                      padding: 8, borderRadius: 10, background: "#fff",
+                      boxShadow: "0 12px 28px rgba(0,0,0,.15)",
+                    }}>
+                      {item.children.map((child: any, ci: number) => (
+                        <a key={ci} href={child.link || "#"} style={{
+                          display: "block", padding: "8px 12px", borderRadius: 6,
+                          color: "#1e293b", fontSize: 13, fontWeight: 600, textDecoration: "none",
+                        }}>{child.text || child.nama}</a>
+                      ))}
+                    </div>
+                    <style>{`.nav-submenu:hover { opacity: 1 !important; visibility: visible !important; } div:hover > .nav-submenu { opacity: 1; visibility: visible; }`}</style>
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </nav>
       )}
     </header>
   )
 }
 
-function SiteFooterBlock(_props: any) {
+function SiteFooterBlock(props: any) {
+  const { teks, backgroundColor } = props
   return (
     <footer style={{
-      background: "#1e293b", color: "#94a3b8", padding: "24px",
+      background: backgroundColor || "#1e293b", color: "#94a3b8", padding: "24px",
       textAlign: "center", fontSize: 13, borderRadius: "12px 12px 0 0", marginTop: 24,
     }}>
-      <p style={{ margin: 0 }}>&copy; {new Date().getFullYear()} OpenSID — Sistem Informasi Desa</p>
+      <p style={{ margin: 0 }}>{teks || `© ${new Date().getFullYear()} OpenSID — Sistem Informasi Desa`}</p>
     </footer>
   )
 }
@@ -227,14 +292,62 @@ function VillageApparatusBlock(props: ApparatusProps) {
 
 function NavigationBlock(props: any) {
   const ctx = useCtx(props)
-  const menu = ctx.menu || []
+  const { items: rawItems, style: navStyle = "green" } = props
+  let items: any[] = []
+  try {
+    const parsed = typeof rawItems === "string" ? JSON.parse(rawItems) : rawItems
+    items = Array.isArray(parsed) ? parsed : []
+  } catch { items = [] }
+  if (items.length === 0) items = (ctx.menu || []).slice(0, 8)
+
+  const styles: Record<string, any> = {
+    green: { bg: "linear-gradient(135deg, #18864d, #005a42)", hover: "rgba(255,255,255,.15)", text: "#fff" },
+    blue: { bg: "linear-gradient(135deg, #3b82f6, #1d4ed8)", hover: "rgba(255,255,255,.15)", text: "#fff" },
+    dark: { bg: "#1e293b", hover: "#334155", text: "#fff" },
+    light: { bg: "#f8fafc", hover: "#e2e8f0", text: "#1e293b" },
+  }
+  const s = styles[navStyle] || styles.green
+
   return (
-    <nav style={{ display: "flex", gap: 8, padding: "12px 0", flexWrap: "wrap" }}>
-      {(menu as any[]).slice(0, 6).map((item: any) => (
-        <a key={item.id} href={item.link || "#"} style={{ padding: "6px 14px", borderRadius: 6, background: "#f1f5f9", color: "#1e293b", fontWeight: 600, fontSize: 13, textDecoration: "none" }}>
-          {item.nama}
-        </a>
-      ))}
+    <nav style={{
+      display: "flex", gap: 4, padding: "14px 20px", flexWrap: "wrap",
+      borderRadius: 13, background: s.bg, boxShadow: "0 8px 24px rgba(0,40,22,.14)",
+      marginBottom: 16,
+    }}>
+      {(items as any[]).map((item: any, i: number) => {
+        const hasSub = item.children && item.children.length > 0
+        return (
+          <div key={i} style={{ position: "relative" }}>
+            <a href={item.link || "#"} style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              padding: "8px 14px", borderRadius: 8, fontSize: 13, fontWeight: 700,
+              color: s.text, textDecoration: "none", background: "transparent",
+              transition: "background .18s",
+            }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = s.hover }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
+            >
+              {item.icon && <i className={`fa ${item.icon}`} />}
+              <span>{item.text || item.nama}</span>
+              {hasSub && <i className="fa fa-angle-down" style={{ fontSize: 12 }} />}
+            </a>
+            {hasSub && (
+              <div style={{
+                position: "absolute", top: "100%", left: 0, minWidth: 200, paddingTop: 6,
+                opacity: 0, visibility: "hidden", transition: "opacity .18s",
+              }}
+                className="nav-submenu"
+              >
+                <div style={{ padding: 8, borderRadius: 10, background: "#fff", boxShadow: "0 12px 28px rgba(0,0,0,.12)" }}>
+                  {item.children.map((child: any, ci: number) => (
+                    <a key={ci} href={child.link || "#"} style={{ display: "block", padding: "8px 12px", borderRadius: 6, color: "#1e293b", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>{child.text || child.nama}</a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      })}
     </nav>
   )
 }
@@ -262,9 +375,38 @@ function WidgetAreaBlock(props: any) {
 // ── Block field definitions ──────────────────────────────────────────
 
 export const BLOCK_FIELDS = {
-  SiteHeader: { label: "Header Desa", fields: [] },
-  SiteFooter: { label: "Footer", fields: [] },
-  Navigation: { label: "Menu Navigasi", fields: [] },
+  SiteHeader: {
+    label: "Header Desa",
+    fields: [
+      { name: "namaDesa", label: "Nama Desa", type: "text" as const },
+      { name: "sebutanKecamatan", label: "Sebutan Kecamatan", type: "text" as const },
+      { name: "namaKecamatan", label: "Nama Kecamatan", type: "text" as const },
+      { name: "namaKabupaten", label: "Nama Kabupaten", type: "text" as const },
+      { name: "logo", label: "URL Logo", type: "text" as const },
+      { name: "showNav", label: "Tampilkan Menu", type: "select" as const, options: [{ value: "true", label: "Ya" }, { value: "", label: "Tidak" }], defaultValue: "true" },
+      { name: "menuItems", label: "Menu Items (JSON)", type: "textarea" as const, defaultValue: JSON.stringify([
+        { text: "Beranda", link: "/", icon: "fa-home", children: [] },
+        { text: "Profil", link: "#", icon: "fa-user", children: [{ text: "Sejarah", link: "/sejarah" }] },
+        { text: "Kontak", link: "/kontak", icon: "fa-envelope" },
+      ], null, 2) },
+    ],
+  },
+  SiteFooter: { label: "Footer", fields: [
+    { name: "teks", label: "Teks Footer", type: "text" as const, defaultValue: "© 2025 OpenSID — Sistem Informasi Desa" },
+    { name: "backgroundColor", label: "Warna Latar", type: "text" as const, defaultValue: "#1e293b" },
+  ]},
+  Navigation: {
+    label: "Menu Navigasi",
+    fields: [
+      { name: "style", label: "Gaya", type: "select" as const, options: [{ value: "green", label: "Hijau" }, { value: "blue", label: "Biru" }, { value: "dark", label: "Gelap" }, { value: "light", label: "Terang" }], defaultValue: "green" },
+      { name: "items", label: "Menu Items (JSON)", type: "textarea" as const, defaultValue: JSON.stringify([
+        { text: "Beranda", link: "/", icon: "fa-home" },
+        { text: "Profil", link: "#", icon: "fa-user", children: [{ text: "Sejarah", link: "/sejarah", icon: "fa-info" }, { text: "Visi Misi", link: "/visi" }] },
+        { text: "Artikel", link: "/artikel", icon: "fa-newspaper-o" },
+        { text: "Kontak", link: "/kontak", icon: "fa-envelope" },
+      ], null, 2) },
+    ],
+  },
   RunningText: { label: "Teks Berjalan", fields: [] },
   Heading: {
     label: "Heading",
