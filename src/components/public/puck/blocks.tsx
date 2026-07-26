@@ -318,9 +318,13 @@ function ArticleListBlock(props: any) {
         <article key={a.id} style={{ display: "grid", gridTemplateColumns: show ? "145px minmax(0,1fr)" : "1fr", gap: 16, padding: 12, border: `1px solid ${T.line}`, borderRadius: 14, background: "#fff" }}>
           {show && imgSrc(a.gambar) && <img src={imgSrc(a.gambar)!} alt="" style={{ height: 118, borderRadius: 9, objectFit: "cover" }} />}
           <div>
-            <span style={{ color: T.green, fontSize: 12, fontWeight: 900, textTransform: "uppercase" }}>{a.kategori?.kategori || (typeof a.kategori === "string" ? a.kategori : "Artikel")}</span>
+            <span style={{ color: T.green, fontSize: 12, fontWeight: 900, textTransform: "uppercase" }}>{a.kategori?.kategori || "Artikel"}</span>
             <h3 style={{ margin: "7px 0", fontSize: titleSize, fontWeight: 900, lineHeight: 1.25 }}><a href={`/artikel/${a.slug || a.id}`} style={{ color: T.text, textDecoration: "none" }}>{a.judul}</a></h3>
             {a.isi && <p style={{ margin: 0, fontSize: excerptSize, lineHeight: 1.5, color: "#4f5b6e" }}>{a.isi.replace(/<[^>]*>/g, "").slice(0, 120)}</p>}
+            <div style={{ display: "flex", gap: 20, marginTop: 10, color: "#94a3b8", fontSize: 12 }}>
+              <span><i className="fa fa-calendar" style={{ marginRight: 6 }} />{a.tgl_upload ? new Date(a.tgl_upload).toLocaleDateString("id-ID") : ""}</span>
+              <span><i className="fa fa-eye" style={{ marginRight: 6 }} />{(a.hit || 0).toLocaleString("id-ID")}</span>
+            </div>
           </div>
         </article>
       ))}
