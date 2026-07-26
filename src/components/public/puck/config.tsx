@@ -54,7 +54,7 @@ for (const [name, render] of Object.entries(BLOCK_RENDERERS)) {
     },
     fields: [
       ...def.fields.map((f: any) => ({
-        type: f.type, // pass through: text, textarea, number, select, checkbox, slot
+        type: f.type,
         name: f.name,
         label: f.label,
         ...(f.options ? { options: f.options } : {}),
@@ -65,7 +65,11 @@ for (const [name, render] of Object.entries(BLOCK_RENDERERS)) {
         label: `⚙ ${f.label}`,
         ...(f.options ? { options: f.options } : {}),
       })),
-    ],
+    ].reduce((acc: any, f: any) => {
+      const { name, ...fieldDef } = f
+      acc[name] = fieldDef
+      return acc
+    }, {}),
     defaultProps: def.fields.reduce((d: any, f: any) => {
       if (f.defaultValue !== undefined && f.type !== "slot") d[f.name] = f.defaultValue
       return d
