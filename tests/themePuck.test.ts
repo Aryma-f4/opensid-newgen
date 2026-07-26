@@ -81,8 +81,8 @@ test("publicPuckComponents has all block types", () => {
 
 test("PUCK_CATEGORIES cover all components", () => {
   const categorized = new Set<string>()
-  for (const cat of PUCK_CATEGORIES) {
-    for (const comp of cat.components) categorized.add(comp)
+  for (const components of Object.values(PUCK_CATEGORIES)) {
+    for (const comp of components) categorized.add(comp)
   }
   assert.equal(categorized.size, Object.keys(BLOCK_RENDERERS).length)
 })

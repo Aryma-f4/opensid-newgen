@@ -65,7 +65,8 @@ export function parsePuckLayout(value: unknown): PuckLayout {
   return puckContentSchema.parse(value)
 }
 
-// ── Starter layouts (matching current homepage) ──────────────────────
+// These are loaded when a new Puck theme is created or layout is restored.
+// Matches the current legacy homepage structure with all sections.
 
 export function starterPuckData(routeKey: string): PuckLayout {
   switch (routeKey) {
@@ -75,72 +76,17 @@ export function starterPuckData(routeKey: string): PuckLayout {
           { type: "SiteHeader", props: {} },
           { type: "Navigation", props: { style: "green" } },
           { type: "RunningText", props: {} },
-          {
-            type: "Columns", props: {
-              columnCount: 2, gap: 28, template: "minmax(0,1fr) 445px",
-              col1: [
-                { type: "HeroCard", props: {
-                  title: "Selamat Datang",
-                  subtitle: "Website Resmi Desa",
-                  description: "Portal informasi resmi desa. Temukan berita, layanan, dan profil desa di sini.",
-                  ctaText: "Selengkapnya",
-                  ctaLink: "#",
-                }},
-                { type: "SectionHeader", props: { title: "Berita Utama", icon: "fa-newspaper-o", showAction: "true", actionText: "Lihat Semua", actionLink: "/artikel" } },
-                { type: "FeaturedArticle", props: {} },
-                { type: "SectionHeader", props: { title: "Artikel Terkini", icon: "fa-clock-o" } },
-                { type: "ArticleList", props: { limit: 6, columns: 2, showImage: true } },
-              ],
-              col2: [
-                { type: "DateCard", props: {} },
-                {
-                  type: "Div", props: {
-                    display: "block", padding: 26, background: "rgba(255,255,255,.94)",
-                    border: "1px solid #dde4ea", borderRadius: 14,
-                    boxShadow: "0 12px 30px rgba(30,50,80,.06)", _marginTop: 12,
-                    content: [
-                      { type: "Heading", props: { text: "Masuk", level: 2, fontSize: 20, fontWeight: 900 } },
-                      { type: "LoginButton", props: { text: "Layanan Mandiri", href: "/layanan-mandiri", icon: "fa-user", bgColor: "linear-gradient(135deg,#3daa46,#2b923e)" } },
-                      { type: "LoginButton", props: { text: "Admin", href: "/siteman", icon: "fa-shield", bgColor: "linear-gradient(135deg,#006c50,#00513d)", _marginTop: 12 } },
-                    ],
-                  },
-                },
-                {
-                  type: "Div", props: {
-                    display: "block", padding: 26, background: "rgba(255,255,255,.94)",
-                    border: "1px solid #dde4ea", borderRadius: 14,
-                    boxShadow: "0 12px 30px rgba(30,50,80,.06)", _marginTop: 12,
-                    content: [
-                      { type: "Heading", props: { text: "Menu Kategori", level: 2, fontSize: 20, fontWeight: 900 } },
-                      { type: "CategoryWidget", props: { limit: 6 } },
-                    ],
-                  },
-                },
-                {
-                  type: "Div", props: {
-                    display: "block", padding: 26, background: "rgba(255,255,255,.94)",
-                    border: "1px solid #dde4ea", borderRadius: 14,
-                    boxShadow: "0 12px 30px rgba(30,50,80,.06)", _marginTop: 12,
-                    content: [
-                      { type: "Heading", props: { text: "Statistik Penduduk", level: 2, fontSize: 20, fontWeight: 900 } },
-                      { type: "Statistics", props: {} },
-                    ],
-                  },
-                },
-                {
-                  type: "Div", props: {
-                    display: "block", padding: 26, background: "rgba(255,255,255,.94)",
-                    border: "1px solid #dde4ea", borderRadius: 14,
-                    boxShadow: "0 12px 30px rgba(30,50,80,.06)", _marginTop: 12,
-                    content: [
-                      { type: "Heading", props: { text: "Aparatur Desa", level: 2, fontSize: 20, fontWeight: 900 } },
-                      { type: "VillageApparatus", props: { limit: 4 } },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
+          { type: "HeroCard", props: {
+            title: "Selamat Datang",
+            subtitle: "Website Resmi Desa",
+            description: "Portal informasi resmi desa. Temukan berita, layanan, dan profil desa di sini.",
+            ctaText: "Selengkapnya",
+            ctaLink: "#",
+          }},
+          { type: "SectionHeader", props: { title: "Berita Utama", icon: "fa-newspaper-o", showAction: "true", actionText: "Lihat Semua", actionLink: "/artikel" } },
+          { type: "FeaturedArticle", props: {} },
+          { type: "SectionHeader", props: { title: "Artikel Terkini", icon: "fa-clock-o" } },
+          { type: "ArticleList", props: { limit: 6, columns: 2, showImage: "true" } },
           { type: "SiteFooter", props: {} },
         ],
       }
@@ -169,7 +115,7 @@ export function starterPuckData(routeKey: string): PuckLayout {
           { type: "SiteHeader", props: {} },
           { type: "Navigation", props: { style: "green" } },
           { type: "SectionHeader", props: { title: "Layanan Mandiri", icon: "fa-users" } },
-          { type: "RichText", props: { html: "<p>Layanan mandiri desa.</p>" } },
+          { type: "LoginWidget", props: {} },
           { type: "SiteFooter", props: {} },
         ],
       }
@@ -178,8 +124,8 @@ export function starterPuckData(routeKey: string): PuckLayout {
         content: [
           { type: "SiteHeader", props: {} },
           { type: "Navigation", props: { style: "green" } },
-          { type: "SectionHeader", props: { title: routeKey.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()), icon: "fa-file-text" } },
-          { type: "RichText", props: { html: "<p>Konten halaman.</p>" } },
+          { type: "Heading", props: { text: "Halaman Baru", level: 1, fontSize: 32, fontWeight: 900 } },
+          { type: "RichText", props: { html: "<p>Silakan edit halaman ini melalui editor visual.</p>" } },
           { type: "SiteFooter", props: {} },
         ],
       }

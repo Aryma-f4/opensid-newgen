@@ -84,7 +84,7 @@ export function renderSlotContent(value: any, ctx?: any): ReactNode {
 // ── Div / Container (Elementor-style, slot nesting) ─────────────────
 
 function DivBlock(props: any) {
-  const { display = "block", direction = "row", gap, alignItems, justifyContent, flexWrap, gridCols, template, background, padding, borderRadius, border, boxShadow, minHeight, width, maxWidth } = props
+  const { content, display = "block", direction = "row", gap, alignItems, justifyContent, flexWrap, gridCols, template, background, padding, borderRadius, border, boxShadow, minHeight, width, maxWidth } = props
   const style: Record<string, any> = { display, background, padding, borderRadius, border, boxShadow, minHeight, width, maxWidth }
   if (display === "flex") {
     style.flexDirection = direction
@@ -100,6 +100,7 @@ function DivBlock(props: any) {
   return (
     <div style={style} className="puck-dropzone">
       <DropZone zone="content" />
+      {content && renderSlotContent(content, props.__ctx)}
     </div>
   )
 }
@@ -107,10 +108,11 @@ function DivBlock(props: any) {
 // ── Section (semantic container, slot nesting) ───────────────────────
 
 function SectionBlock(props: any) {
-  const { background, padding = 24, borderRadius = 14, border, boxShadow } = props
+  const { content, background, padding = 24, borderRadius = 14, border, boxShadow } = props
   return (
     <section style={{ background, padding, borderRadius, border, boxShadow }} className="puck-dropzone">
       <DropZone zone="content" />
+      {content && renderSlotContent(content, props.__ctx)}
     </section>
   )
 }
