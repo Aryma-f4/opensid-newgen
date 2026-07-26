@@ -247,15 +247,20 @@ function RunningTextBlock(props: any) {
 // ── HeroCard ────────────────────────────────────────────────────────
 
 function HeroCardBlock(props: any) {
+  const ctx = useCtx(props)
   const { image, title, subtitle, description, ctaText = "Selengkapnya", ctaLink = "#", backgroundColor = "#0b3f2a", overlayOpacity = 78, titleSize = 56, subtitleSize = 25, descSize = 18, height = 520, borderRadius = 16 } = props
+  const villageName = ctx.config?.nama_desa || "OpenSID"
+  const hTitle = title || `Selamat Datang di ${villageName}`
+  const hSubtitle = subtitle || "Desa Maju, Masyarakat Sejahtera"
+  const hDesc = description || "Portal informasi resmi desa."
   return (
     <div style={{ position: "relative", minHeight: height, overflow: "hidden", borderRadius, boxShadow: T.shadow, background: backgroundColor, fontFamily: T.font }}>
       {image && <img src={image} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
       <div style={{ position: "absolute", inset: 0, background: `linear-gradient(90deg,rgba(0,46,31,${overlayOpacity / 100}) 0%,rgba(0,76,43,.38) 48%,rgba(0,0,0,.10) 100%)` }} />
       <div style={{ position: "absolute", left: 140, top: "50%", width: "min(520px, calc(100% - 260px))", transform: "translateY(-50%)", color: "#fff" }}>
-        {title && <h1 style={{ margin: "0 0 8px", color: "#fff", fontSize: titleSize, lineHeight: 1, fontWeight: 900 }}>{title}</h1>}
-        {subtitle && <h2 style={{ margin: "0 0 22px", color: "#fff", fontSize: subtitleSize, fontWeight: 800 }}>{subtitle}</h2>}
-        {description && <p style={{ maxWidth: 430, margin: "0 0 28px", color: "rgba(255,255,255,.94)", fontSize: descSize, lineHeight: 1.55, fontWeight: 600 }}>{description}</p>}
+        <h1 style={{ margin: "0 0 8px", color: "#fff", fontSize: titleSize, lineHeight: 1, fontWeight: 900 }}>{hTitle}</h1>
+        {hSubtitle && <h2 style={{ margin: "0 0 22px", color: "#fff", fontSize: subtitleSize, fontWeight: 800 }}>{hSubtitle}</h2>}
+        {hDesc && <p style={{ maxWidth: 430, margin: "0 0 28px", color: "rgba(255,255,255,.94)", fontSize: descSize, lineHeight: 1.55, fontWeight: 600 }}>{hDesc}</p>}
         {ctaText && <a href={ctaLink} style={{ display: "inline-flex", alignItems: "center", gap: 14, height: 52, padding: "0 26px", borderRadius: 8, color: "#fff", background: "linear-gradient(135deg,#38a846,#1f8a42)", fontSize: 16, fontWeight: 850, textDecoration: "none", boxShadow: "0 12px 28px rgba(0,79,39,.24)" }}>{ctaText}</a>}
       </div>
     </div>
@@ -278,18 +283,26 @@ function SectionHeaderBlock(props: any) {
 // ── FeaturedArticle ─────────────────────────────────────────────────
 
 function FeaturedArticleBlock(props: any) {
+  const ctx = useCtx(props)
   const { image, category, title, excerpt, date, author, link = "#" } = props
+  // Fall back to context article when no static props provided
+  const article: any = ctx.article || (ctx.articles || [])[0]
+  const imgSrc = image || (article?.gambar ? (article.gambar.startsWith("http") || article.gambar.startsWith("/") ? article.gambar : `/desa/upload/artikel/${article.gambar}`) : null)
+  const cat = category || article?.kategori?.kategori
+  const ttl = title || article?.judul
+  const exc = excerpt || (article?.isi ? article.isi.replace(/<[^>]*>/g, "").slice(0, 210) : null)
+  const dt = date || (article?.tgl_upload ? new Date(article.tgl_upload).toLocaleDateString("id-ID", { year: "numeric", month: "long", day: "numeric" }) : null)
   return (
     <div style={{ display: "grid", gridTemplateColumns: "445px minmax(0,1fr)", gap: 28, padding: 14, border: `1px solid ${T.line}`, borderRadius: 14, background: "#fff", boxShadow: T.shadow, fontFamily: T.font }}>
       <div style={{ display: "block", height: 232, overflow: "hidden", borderRadius: 10 }}>
-        {image && <img src={image} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+        {imgSrc && <img src={imgSrc} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
       </div>
       <div style={{ padding: "12px 8px 8px 0" }}>
-        {category && <span style={{ display: "inline-flex", alignItems: "center", minHeight: 28, padding: "4px 14px", borderRadius: 8, color: T.green, background: T.greenSoft, fontSize: 14, fontWeight: 900, textTransform: "uppercase" }}>{category}</span>}
-        {title && <h3 style={{ margin: "12px 0", fontSize: 22, fontWeight: 900, lineHeight: 1.25 }}><a href={link} style={{ color: T.text, textDecoration: "none" }}>{title}</a></h3>}
-        {excerpt && <p style={{ color: "#4f5b6e", fontSize: 16, lineHeight: 1.72, margin: 0 }}>{excerpt}</p>}
+        {cat && <span style={{ display: "inline-flex", alignItems: "center", minHeight: 28, padding: "4px 14px", borderRadius: 8, color: T.green, background: T.greenSoft, fontSize: 14, fontWeight: 900, textTransform: "uppercase" }}>{cat}</span>}
+        {ttl && <h3 style={{ margin: "12px 0", fontSize: 22, fontWeight: 900, lineHeight: 1.25 }}><a href={link || `/artikel/${article?.slug || article?.id}`} style={{ color: T.text, textDecoration: "none" }}>{ttl}</a></h3>}
+        {exc && <p style={{ color: "#4f5b6e", fontSize: 16, lineHeight: 1.72, margin: 0 }}>{exc}</p>}
         <div style={{ display: "flex", flexWrap: "wrap", gap: 28, marginTop: 18, color: "#677386", fontSize: 14 }}>
-          {date && <span><i className="fa fa-calendar" style={{ marginRight: 8 }} />{date}</span>}
+          {dt && <span><i className="fa fa-calendar" style={{ marginRight: 8 }} />{dt}</span>}
           {author && <span><i className="fa fa-user" style={{ marginRight: 8 }} />{author}</span>}
         </div>
       </div>
