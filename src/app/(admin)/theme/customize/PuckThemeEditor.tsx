@@ -284,18 +284,24 @@ export default function PuckThemeEditor({
         overrides={{
           fieldTypes: {
             custom: function ColorField({ value, onChange }: any) {
-              const ref = useRef(null)
+              const inputRef = useRef(null)
+              const swatchRef = useRef<HTMLDivElement>(null)
               const cur = value || "#000000"
               return (
                 <div style={{ display: "flex", gap: 8, alignItems: "center", padding: "4px 0" }}>
                   <div style={{ position: "relative", width: 56, height: 42 }}>
-                    <div onClick={() => (ref.current as any)?.click()} style={{ width: 56, height: 42, border: "2px solid #d1d5db", borderRadius: 8, background: cur, cursor: "pointer" }} />
+                    <div ref={swatchRef} onClick={() => (inputRef.current as any)?.click()} style={{ width: 56, height: 42, border: "2px solid #d1d5db", borderRadius: 8, background: cur, cursor: "pointer" }} />
                     <input
-                      ref={ref}
+                      ref={inputRef}
                       type="color"
                       defaultValue={cur}
-                      onChange={() => {}}
-                      onBlur={(e: any) => { if (e.target.value !== cur) onChange?.(e.target.value) }}
+                      // Update swatch DOM directly via native event — no React re-render
+                      onInput={(e: any) => {
+                        const el = swatchRef.current
+                        if (el) el.style.background = e.target.value
+                      }}
+                      // Commit final value only on blur (picker closed)
+                      onBlur={(e: any) => { onChange?.(e.target.value) }}
                       style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0, cursor: "pointer" }}
                     />
                   </div>
@@ -304,7 +310,7 @@ export default function PuckThemeEditor({
                     defaultValue={cur.replace("#", "")}
                     onBlur={(e: any) => {
                       const v = e.target.value.trim()
-                      if (v && v !== cur.replace("#", "")) onChange?.("#" + (v.startsWith("#") ? v.slice(1) : v))
+                      if (v) onChange?.("#" + (v.startsWith("#") ? v.slice(1) : v))
                     }}
                     onKeyDown={(e: any) => { if (e.key === "Enter") e.currentTarget.blur() }}
                     style={{ flex: 1, padding: "8px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontFamily: "monospace", fontSize: 13 }}
