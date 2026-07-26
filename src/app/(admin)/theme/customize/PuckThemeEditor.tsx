@@ -285,8 +285,8 @@ export default function PuckThemeEditor({
           fieldTypes: {
             custom: ({ value, onChange }: any) => (
               <div style={{ display: "flex", gap: 8, alignItems: "center", padding: "4px 0" }}>
-                <input type="color" value={value || "#000000"} onChange={(e) => onChange?.(e.target.value)} style={{ width: 44, height: 38, border: 0, cursor: "pointer", padding: 0, borderRadius: 6 }} />
-                <input type="text" value={value || ""} onChange={(e) => onChange?.(e.target.value)} style={{ flex: 1, padding: "6px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontFamily: "monospace", fontSize: 13 }} />
+                <input type="color" value={value || "#000000"} onChange={(e) => onChange?.(e.target.value)} style={{ width: 56, height: 42, border: "2px solid #d1d5db", cursor: "pointer", padding: 2, borderRadius: 8, background: "#fff" }} />
+                <input type="text" value={value || ""} onChange={(e) => onChange?.(e.target.value)} style={{ flex: 1, padding: "8px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontFamily: "monospace", fontSize: 13 }} />
               </div>
             ),
           } as any,
