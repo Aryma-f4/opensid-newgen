@@ -275,12 +275,22 @@ export default function PuckThemeEditor({
           categories: Object.entries(PUCK_CATEGORIES).map(([label, components]) => ({ label: label, components })),
         } as any}
         data={puckData}
-        onChange={(data: any) => setPuckData(data)}
+        onChange={(data: any) => { console.log("puck data", data?.content?.length); setPuckData(data) }}
         onPublish={async (data: any) => {
           setPuckData(data)
           await handleSave()
         }}
         plugins={[fieldsPlugin()]}
+        overrides={{
+          fieldTypes: {
+            custom: ({ value, onChange }: any) => (
+              <div style={{ display: "flex", gap: 8, alignItems: "center", padding: "4px 0" }}>
+                <input type="color" value={value || "#000000"} onChange={(e) => onChange?.(e.target.value)} style={{ width: 44, height: 38, border: 0, cursor: "pointer", padding: 0, borderRadius: 6 }} />
+                <input type="text" value={value || ""} onChange={(e) => onChange?.(e.target.value)} style={{ flex: 1, padding: "6px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontFamily: "monospace", fontSize: 13 }} />
+              </div>
+            ),
+          } as any,
+        }}
         renderHeader={() => (
           <EditorToolbar
             themes={themes}

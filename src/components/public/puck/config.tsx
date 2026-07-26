@@ -1,19 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { BLOCK_RENDERERS, BLOCK_FIELDS, buildWrapperStyle } from "./blocks"
-
-// ── Color field renderer (uses HTML5 input type=color) ───────────────
-function ColorFieldRender({ value, onChange }: { value?: string; onChange?: (v: string) => void }) {
-  const [val, setVal] = useState("")
-  useEffect(() => { setVal(value || "#000000") }, [value])
-  return (
-    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-      <input type="color" value={val} onChange={(e) => { setVal(e.target.value); onChange?.(e.target.value) }} style={{ width: 40, height: 36, border: 0, cursor: "pointer", padding: 0, borderRadius: 4 }} />
-      <input type="text" value={val} onChange={(e) => { setVal(e.target.value); onChange?.(e.target.value) }} style={{ flex: 1, padding: "4px 8px", borderRadius: 4, border: "1px solid #d1d5db", fontFamily: "monospace", fontSize: 12 }} />
-    </div>
-  )
-}
 
 // ── Universal style fields (Elementor-style, on EVERY block) ────────
 // Prefixed with _ so they never clash with block-specific props
@@ -25,8 +12,8 @@ export const STYLE_FIELDS = [
   { name: "_margin", label: "Margin (px)", type: "number" as const },
   { name: "_marginTop", label: "Margin Atas (px)", type: "number" as const },
   { name: "_marginBottom", label: "Margin Bawah (px)", type: "number" as const },
-  { name: "_background", label: "Background", type: "custom" as const, render: ColorFieldRender },
-  { name: "_color", label: "Warna Teks", type: "custom" as const, render: ColorFieldRender },
+  { name: "_background", label: "Background", type: "color" as const },
+  { name: "_color", label: "Warna Teks", type: "color" as const },
   { name: "_fontSize", label: "Ukuran Font (px)", type: "number" as const },
   { name: "_fontWeight", label: "Ketebalan Font", type: "number" as const },
   { name: "_textAlign", label: "Rata Teks", type: "select" as const, options: [{ value: "", label: "Default" }, { value: "left", label: "Kiri" }, { value: "center", label: "Tengah" }, { value: "right", label: "Kanan" }] },
@@ -67,17 +54,17 @@ for (const [name, render] of Object.entries(BLOCK_RENDERERS)) {
     },
     fields: [
       ...def.fields.map((f: any) => ({
-        type: f.type === "color" ? "custom" : f.type === "custom" ? "custom" : f.type,
+        type: f.type === "color" ? "custom" : f.type,
         name: f.name,
         label: f.label,
-        ...(f.type === "color" || (f.type === "custom" && f.render) ? { render: f.type === "color" ? ColorFieldRender : f.render } : {}),
+        ...(f.type === "custom" && f.render ? { render: f.render } : {}),
         ...(f.options ? { options: f.options } : {}),
       })),
       ...STYLE_FIELDS.map((f: any) => ({
-        type: f.type === "color" ? "custom" : f.type === "custom" ? "custom" : f.type,
+        type: f.type === "color" ? "custom" : f.type,
         name: f.name,
         label: `⚙ ${f.label}`,
-        ...(f.type === "color" || (f.type === "custom" && f.render) ? { render: f.type === "color" ? ColorFieldRender : f.render } : {}),
+        ...(f.type === "custom" && f.render ? { render: f.render } : {}),
         ...(f.options ? { options: f.options } : {}),
       })),
     ].reduce((acc: any, f: any) => {
