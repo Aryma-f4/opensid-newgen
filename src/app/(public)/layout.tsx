@@ -17,7 +17,7 @@ export default async function PublicLayout({ children }: { children: React.React
           fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
           color: "#182033",
         }}>
-          <div style={{ width: "min(1720px, calc(100% - 80px))", margin: "0 auto", padding: "28px 0 18px" }}>
+          <div style={{ width: "min(1360px, calc(100% - 80px))", margin: "0 auto", padding: "24px 0 18px" }}>
             {children}
           </div>
         </main>

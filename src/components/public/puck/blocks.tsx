@@ -123,7 +123,7 @@ function ColumnsBlock(props: any) {
   const { col1, col2, col3, col4, columnCount = 2, gap = 28, template } = props
   const cols = [col1, col2, col3, col4].slice(0, Math.min(Math.max(columnCount, 1), 4))
   return (
-    <div style={{ display: "grid", gridTemplateColumns: template || `repeat(${cols.length}, 1fr)`, gap }}>
+    <div style={{ display: "grid", gridTemplateColumns: template || (cols.length > 1 ? "repeat(auto-fit, minmax(340px, 1fr))" : "1fr"), gap }}>
       {cols.map((col, i) => <div key={i} style={{ minWidth: 0 }}>{renderSlotContent(col, props.__ctx)}</div>)}
     </div>
   )
@@ -195,28 +195,39 @@ function NavigationBlock(props: any) {
       <ul style={{ display: "flex", gap: 4, padding: "0 8px", margin: 0, listStyle: "none" }}>
         {(items as any[]).map((item: any, i: number) => {
           const hasSub = item.children && item.children.length > 0
+          const linkHash = `#nav-item-${i}`
           return (
-            <li key={i} style={{ position: "relative" }}>
+            <li key={i} style={{ position: "relative" }}
+              onMouseEnter={(e) => { const sub = (e.currentTarget as HTMLElement).querySelector('.nav-sub'); if (sub) (sub as HTMLElement).style.display = 'block' }}
+              onMouseLeave={(e) => { const sub = (e.currentTarget as HTMLElement).querySelector('.nav-sub'); if (sub) (sub as HTMLElement).style.display = 'none' }}
+            >
               <a href={item.link || "#"} style={{
-                height: 56, display: "inline-flex", alignItems: "center", gap: 8, padding: "0 12px",
+                height: 56, display: "inline-flex", alignItems: "center", gap: 8, padding: "0 14px",
                 color: s.text, fontSize: 13, fontWeight: 800, textTransform: "uppercase" as const, whiteSpace: "nowrap",
-                borderRadius: 9, textDecoration: "none",
-              }}>
+                borderRadius: 9, textDecoration: "none", transition: "background .15s",
+              }}
+                onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = s.hover}
+                onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.background = "transparent"}
+              >
                 {item.icon && <i className={`fa ${item.icon}`} style={{ fontSize: 18 }} />}
                 <span>{item.text || item.nama}</span>
                 {hasSub && <i className="fa fa-caret-down" style={{ opacity: 0.8, fontSize: 12 }} />}
               </a>
               {hasSub && (
-                <div style={{
-                  position: "absolute", top: "calc(100% + 10px)", left: 0, minWidth: 260, padding: 8,
-                  border: "1px solid rgba(0,101,67,.12)", borderRadius: 12,
-                  background: "rgba(255,255,255,.98)", boxShadow: T.shadow,
+                <div className="nav-sub" style={{
+                  display: "none", position: "absolute", top: "calc(100% + 6px)", left: 0, minWidth: 240, padding: 6,
+                  border: "1px solid rgba(0,96,62,.15)", borderRadius: 12,
+                  background: "#fff", boxShadow: "0 12px 36px rgba(0,0,0,.12)",
                 }}>
                   {item.children.map((child: any, ci: number) => (
                     <a key={ci} href={child.link || "#"} style={{
-                      display: "block", padding: "11px 13px 11px 30px", borderRadius: 8,
-                      color: T.text, fontWeight: 750, fontSize: 14, textDecoration: "none",
-                    }}>{child.text || child.nama}</a>
+                      display: "block", padding: "10px 14px 10px 20px", borderRadius: 8,
+                      color: T.text, fontWeight: 700, fontSize: 14, textDecoration: "none",
+                      transition: "background .12s",
+                    }}
+                      onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = "#eaf5ef"}
+                      onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.background = "transparent"}
+                    >{child.text || child.nama}</a>
                   ))}
                 </div>
               )}
@@ -254,14 +265,14 @@ function HeroCardBlock(props: any) {
   const hSubtitle = subtitle || "Desa Maju, Masyarakat Sejahtera"
   const hDesc = description || "Portal informasi resmi desa."
   return (
-    <div style={{ position: "relative", minHeight: height, overflow: "hidden", borderRadius, boxShadow: T.shadow, background: backgroundColor, fontFamily: T.font }}>
+    <div style={{ position: "relative", minHeight: `clamp(320px, ${height}px, 80vh)`, overflow: "hidden", borderRadius, boxShadow: T.shadow, background: backgroundColor, fontFamily: T.font }}>
       {image && <img src={image} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />}
       <div style={{ position: "absolute", inset: 0, background: `linear-gradient(90deg,rgba(0,46,31,${overlayOpacity / 100}) 0%,rgba(0,76,43,.38) 48%,rgba(0,0,0,.10) 100%)` }} />
-      <div style={{ position: "absolute", left: 140, top: "50%", width: "min(520px, calc(100% - 260px))", transform: "translateY(-50%)", color: "#fff" }}>
-        <h1 style={{ margin: "0 0 8px", color: "#fff", fontSize: titleSize, lineHeight: 1, fontWeight: 900 }}>{hTitle}</h1>
-        {hSubtitle && <h2 style={{ margin: "0 0 22px", color: "#fff", fontSize: subtitleSize, fontWeight: 800 }}>{hSubtitle}</h2>}
-        {hDesc && <p style={{ maxWidth: 430, margin: "0 0 28px", color: "rgba(255,255,255,.94)", fontSize: descSize, lineHeight: 1.55, fontWeight: 600 }}>{hDesc}</p>}
-        {ctaText && <a href={ctaLink} style={{ display: "inline-flex", alignItems: "center", gap: 14, height: 52, padding: "0 26px", borderRadius: 8, color: "#fff", background: "linear-gradient(135deg,#38a846,#1f8a42)", fontSize: 16, fontWeight: 850, textDecoration: "none", boxShadow: "0 12px 28px rgba(0,79,39,.24)" }}>{ctaText}</a>}
+      <div style={{ position: "absolute", left: "clamp(24px, 8vw, 140px)", top: "50%", width: "min(480px, calc(100% - 80px))", transform: "translateY(-50%)", color: "#fff" }}>
+        <h1 style={{ margin: "0 0 6px", color: "#fff", fontSize: `clamp(28px, 5vw, ${titleSize}px)`, lineHeight: 1.1, fontWeight: 900 }}>{hTitle}</h1>
+        {hSubtitle && <h2 style={{ margin: "0 0 16px", color: "#fff", fontSize: `clamp(18px, 2.5vw, ${subtitleSize}px)`, fontWeight: 800 }}>{hSubtitle}</h2>}
+        {hDesc && <p style={{ maxWidth: 400, margin: "0 0 22px", color: "rgba(255,255,255,.90)", fontSize: `clamp(14px, 1.8vw, ${descSize}px)`, lineHeight: 1.5, fontWeight: 600 }}>{hDesc}</p>}
+        {ctaText && <a href={ctaLink} style={{ display: "inline-flex", alignItems: "center", gap: 12, height: 48, padding: "0 24px", borderRadius: 8, color: "#fff", background: "linear-gradient(135deg,#38a846,#1f8a42)", fontSize: 15, fontWeight: 850, textDecoration: "none", boxShadow: "0 10px 24px rgba(0,79,39,.22)" }}>{ctaText}</a>}
       </div>
     </div>
   )
@@ -293,7 +304,7 @@ function FeaturedArticleBlock(props: any) {
   const exc = excerpt || (article?.isi ? article.isi.replace(/<[^>]*>/g, "").slice(0, 210) : null)
   const dt = date || (article?.tgl_upload ? new Date(article.tgl_upload).toLocaleDateString("id-ID", { year: "numeric", month: "long", day: "numeric" }) : null)
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "380px minmax(0,1fr)", gap: 24, padding: 16, border: `1px solid ${T.line}`, borderRadius: 14, background: "#fff", boxShadow: T.shadow, fontFamily: T.font }}>
+    <div style={{ display: "grid", gridTemplateColumns: "minmax(280px, 380px) minmax(0,1fr)", gap: 24, padding: 16, border: `1px solid ${T.line}`, borderRadius: 14, background: "#fff", boxShadow: T.shadow, fontFamily: T.font }}>
       <div style={{ height: 210, overflow: "hidden", borderRadius: 10 }}>
         {imgSrc ? <img src={imgSrc} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ height: "100%", background: "#eef2f0", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontSize: 14 }}>No Image</div>}
       </div>
@@ -327,7 +338,7 @@ function ArticleListBlock(props: any) {
   }
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: `repeat(${columns}, minmax(0,1fr))`, gap: 16, fontFamily: T.font }}>
+    <div style={{ display: "grid", gridTemplateColumns: `repeat(${columns}, minmax(280px, 1fr))`, gap: 16, fontFamily: T.font }}>
       {articles.map((a: any) => (
         <article key={a.id} style={{ display: "grid", gridTemplateColumns: show && imgSrc(a.gambar) ? "130px minmax(0,1fr)" : "1fr", gap: 14, padding: "10px 12px", border: `1px solid ${T.line}`, borderRadius: 12, background: "#fff", transition: "box-shadow .15s" }}>
           {show && imgSrc(a.gambar) && <img src={imgSrc(a.gambar)!} alt="" style={{ width: "100%", height: 100, borderRadius: 8, objectFit: "cover" }} />}
@@ -552,7 +563,7 @@ function SiteFooterBlock(props: any) {
   const villageName = ctx.config.nama_desa || "OpenSID"
   const siteTitle = `Website Resmi Kelurahan ${villageName}`.toUpperCase()
   return (
-    <footer style={{ display: "flex", justifyContent: "space-between", gap: 24, marginTop: 32, padding: "24px 0 10px", color: "#6e7a8a", borderTop: `1px solid ${T.line}`, fontFamily: T.font, fontSize: 14 }}>
+    <footer style={{ display: "flex", justifyContent: "space-between", gap: 16, marginTop: 32, padding: "24px 0 10px", color: "#6e7a8a", borderTop: `1px solid ${T.line}`, fontFamily: T.font, fontSize: 14, flexWrap: "wrap" }}>
       <div>
         <strong style={{ color: T.text, fontSize: 15 }}>{siteTitle}</strong>
         <p style={{ margin: "8px 0 0", lineHeight: 1.6 }}>{teks || `${ctx.config.alamat_kantor || "-"} · Kec. ${ctx.config.nama_kecamatan || "-"} · Kab. ${ctx.config.nama_kabupaten || "-"}`}</p>
