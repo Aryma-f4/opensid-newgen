@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { DropZone } from "@puckeditor/core"
 import type { PublicThemeContext } from "./types"
 
 // ── Shared Design Tokens (matching current site) ───────────────────
@@ -83,7 +84,7 @@ export function renderSlotContent(value: any, ctx?: any): ReactNode {
 // ── Div / Container (Elementor-style, slot nesting) ─────────────────
 
 function DivBlock(props: any) {
-  const { content, display = "block", direction = "row", gap, alignItems, justifyContent, flexWrap, gridCols, template, background, padding, borderRadius, border, boxShadow, minHeight, width, maxWidth } = props
+  const { display = "block", direction = "row", gap, alignItems, justifyContent, flexWrap, gridCols, template, background, padding, borderRadius, border, boxShadow, minHeight, width, maxWidth } = props
   const style: Record<string, any> = { display, background, padding, borderRadius, border, boxShadow, minHeight, width, maxWidth }
   if (display === "flex") {
     style.flexDirection = direction
@@ -96,16 +97,20 @@ function DivBlock(props: any) {
     style.gridTemplateColumns = template || (gridCols ? `repeat(${gridCols}, 1fr)` : "repeat(2, 1fr)")
     style.gap = gap ?? 16
   }
-  return <div style={style}>{renderSlotContent(content, props.__ctx)}</div>
+  return (
+    <div style={style} className="puck-dropzone">
+      <DropZone zone="content" />
+    </div>
+  )
 }
 
 // ── Section (semantic container, slot nesting) ───────────────────────
 
 function SectionBlock(props: any) {
-  const { content, background, padding = 24, borderRadius = 14, border, boxShadow } = props
+  const { background, padding = 24, borderRadius = 14, border, boxShadow } = props
   return (
-    <section style={{ background, padding, borderRadius, border, boxShadow }}>
-      {renderSlotContent(content, props.__ctx)}
+    <section style={{ background, padding, borderRadius, border, boxShadow }} className="puck-dropzone">
+      <DropZone zone="content" />
     </section>
   )
 }

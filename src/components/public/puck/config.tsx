@@ -28,6 +28,19 @@ export const STYLE_FIELDS = [
   { name: "_customCss", label: "Custom CSS (properti: nilai; ...)", type: "textarea" as const },
 ]
 
+// ── Category mapping: component → category label ────────────────────
+const COMPONENT_CATEGORY: Record<string, string> = {
+  "Div": "Layout", "Section": "Layout", "Columns": "Layout", "Spacer": "Layout", "Divider": "Layout",
+  "Text": "Dasar", "Heading": "Dasar", "RichText": "Dasar", "Image": "Dasar", "Button": "Dasar", "Icon": "Dasar", "Logo": "Dasar",
+  "SiteHeader": "Header", "SearchBar": "Header", "Navigation": "Header",
+  "HeroCard": "Hero", "SectionHeader": "Hero",
+  "FeaturedArticle": "Konten", "ArticleCard": "Konten",
+  "ArticleList": "Data Desa", "ArticleDetail": "Data Desa", "CategoryList": "Data Desa", "CategoryWidget": "Data Desa",
+  "Statistics": "Data Desa", "StatBar": "Data Desa", "VillageApparatus": "Data Desa", "PersonCard": "Data Desa", "RunningText": "Data Desa",
+  "DateCard": "Sidebar", "LoginWidget": "Sidebar", "LoginButton": "Sidebar", "SidebarWidget": "Sidebar", "CategoryItem": "Sidebar", "WidgetArea": "Sidebar",
+  "SiteFooter": "Footer", "SocialLinks": "Footer",
+}
+
 // ── Component registry ───────────────────────────────────────────────
 
 export const publicPuckComponents: Record<string, any> = {}
@@ -57,6 +70,7 @@ for (const [name, render] of Object.entries(BLOCK_RENDERERS)) {
       if (f.defaultValue !== undefined && f.type !== "slot") d[f.name] = f.defaultValue
       return d
     }, {}),
+    category: COMPONENT_CATEGORY[name] || "Lainnya",
   }
 }
 
