@@ -1,21 +1,135 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Puck, Render, blocksPlugin, fieldsPlugin, outlinePlugin } from "@puckeditor/core"
+import { useRouter } from "next/navigation"
+import { Puck, usePuck, fieldsPlugin } from "@puckeditor/core"
 import "@puckeditor/core/dist/index.css"
 import { publicPuckComponents, PUCK_CATEGORIES } from "@/components/public/puck/config"
-import { editorPreviewContext } from "@/components/public/puck/types"
-import type { PublicRouteKey } from "@/lib/themePuck"
-import { savePuckLayout, createVisualTheme, activateVisualTheme, restoreStarterLayout } from "./actions"
+import { BUILTIN_PAGES, pagePathFor } from "@/lib/themePuck"
+import { savePuckLayout, createVisualTheme, activateVisualTheme, restoreStarterLayout, createCustomPage } from "./actions"
 
-const PUCK_ROUTES: { key: PublicRouteKey; label: string }[] = [
-  { key: "home", label: "Beranda" },
-  { key: "article-detail", label: "Artikel" },
-  { key: "category-list", label: "Kategori" },
-  { key: "layanan-mandiri", label: "Layanan Mandiri" },
-]
+const VIEWPORT_SIZES = {
+  mobile: { width: 375, height: 812 },
+  tablet: { width: 768, height: 1024 },
+  desktop: { width: "100%" as const, height: "auto" as const },
+}
 
 type Theme = { id: string; nama: string; status: number; renderer?: string | null }
+type PageTab = { key: string; label: string; path: string }
+
+// ── Toolbar ─────────────────────────────────────────────────────────
+
+function EditorToolbar({
+  themes,
+  selectedTheme,
+  onSelectTheme,
+  activeRoute,
+  onSelectRoute,
+  pages,
+  onAddPage,
+  isPreview,
+  onTogglePreview,
+  onSave,
+  onRestore,
+  onActivate,
+  saving,
+}: {
+  themes: Theme[]
+  selectedTheme: Theme
+  onSelectTheme: (t: Theme) => void
+  activeRoute: string
+  onSelectRoute: (r: string) => void
+  pages: PageTab[]
+  onAddPage: () => void
+  isPreview: boolean
+  onTogglePreview: () => void
+  onSave: () => void
+  onRestore: () => void
+  onActivate: () => void
+  saving: boolean
+}) {
+  const { appState, dispatch } = usePuck()
+  const currentViewport = appState.ui.viewports.current.width
+  const activeMode =
+    currentViewport === 375 ? "mobile" :
+    currentViewport === 768 ? "tablet" : "desktop"
+
+  function setViewport(mode: "mobile" | "tablet" | "desktop") {
+    const vp = VIEWPORT_SIZES[mode]
+    dispatch({
+      type: "setUi",
+      ui: { viewports: { current: { width: vp.width, height: vp.height }, controlsVisible: true, options: [] } } as any,
+    })
+  }
+
+  return (
+    <div style={{
+      display: "flex", alignItems: "center", gap: 8, padding: "8px 16px",
+      background: "#fff", borderBottom: "1px solid #e2e8f0", flexWrap: "wrap", minHeight: 48,
+    }}>
+      <select
+        value={selectedTheme.id}
+        onChange={(e) => { const t = themes.find((th) => th.id === e.target.value); if (t) onSelectTheme(t) }}
+        style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 13, fontWeight: 600 }}
+      >
+        {themes.filter((t) => t.renderer === "puck").map((t) => (
+          <option key={t.id} value={t.id}>{t.nama}{t.status === 1 ? " (Aktif)" : ""}</option>
+        ))}
+      </select>
+
+      <div style={{ width: 1, height: 24, background: "#e2e8f0" }} />
+
+      {pages.map((r) => (
+        <button key={r.key} onClick={() => onSelectRoute(r.key)} title={r.path} style={{
+          padding: "6px 14px", borderRadius: 6, border: 0, cursor: "pointer",
+          background: activeRoute === r.key ? "#3b82f6" : "#f1f5f9",
+          color: activeRoute === r.key ? "#fff" : "#475569", fontSize: 13, fontWeight: 600,
+        }}>{r.label}</button>
+      ))}
+      <button onClick={onAddPage} title="Tambah halaman baru" style={{
+        padding: "6px 12px", borderRadius: 6, border: "1px dashed #94a3b8", cursor: "pointer",
+        background: "#fff", color: "#475569", fontSize: 13, fontWeight: 700,
+      }}>＋</button>
+      <span style={{ fontSize: 11, color: "#94a3b8", fontWeight: 600 }}>{pages.length} halaman</span>
+
+      <div style={{ flex: 1 }} />
+
+      {/* Viewport */}
+      <div style={{ display: "flex", gap: 2, background: "#f1f5f9", borderRadius: 6, padding: 2 }}>
+        {(["desktop", "tablet", "mobile"] as const).map((mode) => (
+          <button key={mode} onClick={() => setViewport(mode)} title={mode} style={{
+            padding: "5px 12px", borderRadius: 4, border: 0, cursor: "pointer",
+            background: activeMode === mode ? "#fff" : "transparent",
+            boxShadow: activeMode === mode ? "0 1px 3px rgba(0,0,0,.12)" : "none",
+            fontSize: 12, fontWeight: 600, color: activeMode === mode ? "#1e293b" : "#64748b",
+          }}>{mode === "desktop" ? "🖥 Desktop" : mode === "tablet" ? "📱 Tablet" : "📲 Mobile"}</button>
+        ))}
+      </div>
+
+      <div style={{ width: 1, height: 24, background: "#e2e8f0" }} />
+
+      {/* Edit / Preview */}
+      <button onClick={() => {
+        const next = !isPreview
+        onTogglePreview()
+        dispatch({
+          type: "setUi",
+          ui: { leftSideBarVisible: !next, rightSideBarVisible: !next } as any,
+        })
+      }} style={{
+        padding: "6px 14px", borderRadius: 6, border: 0, cursor: "pointer",
+        background: isPreview ? "#8b5cf6" : "#f1f5f9",
+        color: isPreview ? "#fff" : "#475569", fontSize: 13, fontWeight: 600,
+      }}>{isPreview ? "👁 Preview" : "✏️ Edit"}</button>
+
+      <button onClick={onRestore} className="btn btn-default btn-sm" title="Kembalikan ke layout awal">↺</button>
+      <button onClick={onActivate} className="btn btn-success btn-sm">Aktifkan</button>
+      <button onClick={onSave} disabled={saving} className="btn btn-primary btn-sm">{saving ? "Menyimpan..." : "Simpan"}</button>
+    </div>
+  )
+}
+
+// ── Main Editor ──────────────────────────────────────────────────────
 
 export default function PuckThemeEditor({
   themes,
@@ -25,17 +139,28 @@ export default function PuckThemeEditor({
   initialLayouts: Record<string, any>
 }) {
   const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null)
-  const [activeRoute, setActiveRoute] = useState<PublicRouteKey>("home")
+  const [activeRoute, setActiveRoute] = useState<string>("home")
   const [puckData, setPuckData] = useState<any>({ content: [] })
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
   const [creating, setCreating] = useState(false)
   const [newName, setNewName] = useState("")
-  const [viewMode, setViewMode] = useState<"desktop" | "tablet" | "mobile">("desktop")
+  const [isPreview, setIsPreview] = useState(false)
+  const router = useRouter()
 
   const showToast = useCallback((msg: string) => { setToast(msg); setTimeout(() => setToast(null), 3000) }, [])
 
-  // Select first Puck theme or first theme
+  // Page tabs: builtin + custom pages found in saved layouts for this theme
+  const builtinKeys = new Set(BUILTIN_PAGES.map((p) => p.key))
+  const customPages: PageTab[] = selectedTheme
+    ? Object.keys(initialLayouts)
+        .filter((k) => k.startsWith(`${selectedTheme.id}-`))
+        .map((k) => k.slice(`${selectedTheme.id}-`.length))
+        .filter((rk) => !builtinKeys.has(rk))
+        .map((rk) => ({ key: rk, label: rk.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()), path: pagePathFor(rk) }))
+    : []
+  const pages: PageTab[] = [...BUILTIN_PAGES, ...customPages]
+
   useEffect(() => {
     if (!selectedTheme && themes.length > 0) {
       const puckTheme = themes.find((t) => t.renderer === "puck")
@@ -43,7 +168,6 @@ export default function PuckThemeEditor({
     }
   }, [themes, selectedTheme])
 
-  // Load layout when theme or route changes
   useEffect(() => {
     if (!selectedTheme) return
     const key = `${selectedTheme.id}-${activeRoute}`
@@ -59,11 +183,7 @@ export default function PuckThemeEditor({
     if (!selectedTheme) return
     setSaving(true)
     try {
-      const result = await savePuckLayout({
-        themeId: selectedTheme.id,
-        routeKey: activeRoute,
-        data: puckData,
-      })
+      await savePuckLayout({ themeId: selectedTheme.id, routeKey: activeRoute, data: puckData })
       showToast("Layout berhasil disimpan")
     } catch (e: any) {
       showToast(e.message || "Gagal menyimpan")
@@ -83,6 +203,20 @@ export default function PuckThemeEditor({
       showToast(e.message || "Gagal membuat tema")
     } finally {
       setCreating(false)
+    }
+  }
+
+  async function handleAddPage() {
+    if (!selectedTheme) return
+    const name = window.prompt("Nama halaman baru (mis: Tentang Kami, Profil Desa):")
+    if (!name?.trim()) return
+    try {
+      const res = await createCustomPage(selectedTheme.id, name)
+      showToast(`Halaman "${name}" dibuat — ${pagePathFor(res.routeKey)}`)
+      setActiveRoute(res.routeKey)
+      router.refresh()
+    } catch (e: any) {
+      showToast(e.message || "Gagal membuat halaman")
     }
   }
 
@@ -106,12 +240,7 @@ export default function PuckThemeEditor({
     }
   }
 
-  // Extract Puck sub-components at module level (they exist at runtime but not in types)
-  const PuckPreview = (Puck as any).Preview
-  const PuckFields = (Puck as any).Fields
-
   const isPuckTheme = selectedTheme?.renderer === "puck"
-  const ctx = editorPreviewContext(activeRoute)
 
   if (!selectedTheme) {
     return (
@@ -139,87 +268,37 @@ export default function PuckThemeEditor({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 100px)" }}>
-      {/* Toolbar */}
-      <div style={{
-        display: "flex", alignItems: "center", gap: 8, padding: "8px 16px",
-        background: "#fff", borderBottom: "1px solid #e2e8f0", flexWrap: "wrap",
-      }}>
-        <select
-          value={selectedTheme.id}
-          onChange={(e) => {
-            const t = themes.find((th) => th.id === e.target.value)
-            if (t) setSelectedTheme(t)
-          }}
-          style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: 13, fontWeight: 600 }}
-        >
-          {themes.filter((t) => t.renderer === "puck").map((t) => (
-            <option key={t.id} value={t.id}>{t.nama}{t.status === 1 ? " (Aktif)" : ""}</option>
-          ))}
-        </select>
-
-        <div style={{ width: 1, height: 24, background: "#e2e8f0" }} />
-
-        {PUCK_ROUTES.map((r) => (
-          <button
-            key={r.key}
-            onClick={() => setActiveRoute(r.key)}
-            style={{
-              padding: "6px 14px", borderRadius: 6, border: 0, cursor: "pointer",
-              background: activeRoute === r.key ? "#3b82f6" : "#f1f5f9",
-              color: activeRoute === r.key ? "#fff" : "#475569",
-              fontSize: 13, fontWeight: 600,
-            }}
-          >{r.label}</button>
-        ))}
-
-        <div style={{ flex: 1 }} />
-
-        {/* Viewport controls */}
-        {["desktop", "tablet", "mobile"].map((mode) => (
-          <button
-            key={mode}
-            onClick={() => setViewMode(mode as any)}
-            style={{
-              padding: "4px 10px", borderRadius: 4, border: "1px solid #d1d5db", cursor: "pointer",
-              background: viewMode === mode ? "#e2e8f0" : "#fff", fontSize: 12,
-            }}
-          >{mode === "desktop" ? "🖥" : mode === "tablet" ? "📱" : "📲"}</button>
-        ))}
-
-        <button onClick={handleRestore} className="btn btn-default btn-sm" title="Kembalikan ke layout awal">↺</button>
-        <button onClick={handleActivate} className="btn btn-success btn-sm">Aktifkan</button>
-        <button onClick={handleSave} disabled={saving} className="btn btn-primary btn-sm">{saving ? "Menyimpan..." : "Simpan"}</button>
-      </div>
-
-      {/* Puck Editor — full drag-and-drop visual builder */}
-      <div style={{ flex: 1, position: "relative" }}>
-        <Puck
-          config={{
-            components: publicPuckComponents,
-            root: { fields: [] },
-            categories: PUCK_CATEGORIES,
-          } as any}
-          data={puckData}
-          onChange={(data: any) => {
-            setPuckData(data)
-          }}
-          onPublish={async (data: any) => {
-            setPuckData(data)
-            await handleSave()
-          }}
-        >
-          <PuckPreview>
-            <div style={{
-              maxWidth: viewMode === "mobile" ? 375 : viewMode === "tablet" ? 768 : "100%",
-              margin: "0 auto", minHeight: "100%", background: "#fff",
-              boxShadow: viewMode !== "desktop" ? "0 0 20px rgba(0,0,0,.1)" : "none",
-            }}>
-              <Render {...{ config: { components: publicPuckComponents }, data: puckData, context: ctx } as any} />
-            </div>
-          </PuckPreview>
-          <PuckFields />
-        </Puck>
-      </div>
+      <Puck
+        config={{
+          components: publicPuckComponents,
+          root: { fields: [] },
+          categories: Object.entries(PUCK_CATEGORIES).map(([label, components]) => ({ label, components })),
+        } as any}
+        data={puckData}
+        onChange={(data: any) => setPuckData(data)}
+        onPublish={async (data: any) => {
+          setPuckData(data)
+          await handleSave()
+        }}
+        plugins={[fieldsPlugin({ desktopSideBar: "right" })]}
+        renderHeader={() => (
+          <EditorToolbar
+            themes={themes}
+            selectedTheme={selectedTheme}
+            onSelectTheme={setSelectedTheme}
+            activeRoute={activeRoute}
+            onSelectRoute={setActiveRoute}
+            pages={pages}
+            onAddPage={handleAddPage}
+            isPreview={isPreview}
+            onTogglePreview={() => setIsPreview(!isPreview)}
+            onSave={handleSave}
+            onRestore={handleRestore}
+            onActivate={handleActivate}
+            saving={saving}
+          />
+        )}
+      />
 
       {toast && (
         <div style={{
