@@ -163,8 +163,10 @@ export default function PuckThemeEditor({
 
   useEffect(() => {
     if (!selectedTheme && themes.length > 0) {
-      const puckTheme = themes.find((t) => t.renderer === "puck")
-      setSelectedTheme(puckTheme || themes[0])
+      // Auto-select the ACTIVE theme, or first puck theme
+      const activeTheme = themes.find((t) => t.status === 1 && t.renderer === "puck")
+      const fallback = themes.find((t) => t.renderer === "puck") || themes[0]
+      setSelectedTheme(activeTheme || fallback)
     }
   }, [themes, selectedTheme])
 
@@ -185,6 +187,7 @@ export default function PuckThemeEditor({
     try {
       await savePuckLayout({ themeId: selectedTheme.id, routeKey: activeRoute, data: puckData })
       showToast("Layout berhasil disimpan")
+      router.refresh()
     } catch (e: any) {
       showToast(e.message || "Gagal menyimpan")
     } finally {
@@ -230,6 +233,7 @@ export default function PuckThemeEditor({
     try {
       await activateVisualTheme(selectedTheme.id)
       showToast("Tema diaktifkan")
+      router.refresh()
     } catch (e: any) {
       showToast(e.message || "Gagal mengaktifkan")
     }
