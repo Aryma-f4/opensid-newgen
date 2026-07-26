@@ -257,13 +257,10 @@ export default function PuckThemeEditor({
   async function handleRestore() {
     if (!selectedTheme) return
     try {
-      // Reset preview IMMEDIATELY with starter data, don't wait for DB
-      const starter = starterPuckData(activeRoute)
-      setPuckData(starter)
-      // Then persist to DB server-side
       await restoreStarterLayout(selectedTheme.id, activeRoute)
       showToast("Layout awal dipulihkan")
-      router.refresh()
+      // Full page reload to reset Puck internal state completely
+      setTimeout(() => window.location.reload(), 500)
     } catch (e: any) {
       showToast(e.message || "Gagal memulihkan")
     }
