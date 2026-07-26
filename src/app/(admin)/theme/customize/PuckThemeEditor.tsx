@@ -140,7 +140,12 @@ export default function PuckThemeEditor({
 }) {
   const [selectedTheme, setSelectedTheme] = useState<Theme | null>(null)
   const [activeRoute, setActiveRoute] = useState<string>("home")
-  const [puckData, setPuckData] = useState<any>({ content: [] })
+  // Derive puck data directly from selectedTheme + activeRoute + initialLayouts
+  const puckKey = selectedTheme ? `${selectedTheme.id}-${activeRoute}` : ""
+  const initialPuckData = puckKey && initialLayouts[puckKey]
+    ? initialLayouts[puckKey]
+    : { content: [{ type: "SiteHeader", props: {} }, { type: "SiteFooter", props: {} }] }
+  const [puckData, setPuckData] = useState<any>(initialPuckData)
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
   const [creating, setCreating] = useState(false)
@@ -170,15 +175,12 @@ export default function PuckThemeEditor({
     }
   }, [themes, selectedTheme])
 
+  // Sync puckData when theme/route changes or initialLayouts updates (e.g. after save)
   useEffect(() => {
     if (!selectedTheme) return
     const key = `${selectedTheme.id}-${activeRoute}`
     const layout = initialLayouts[key]
-    if (layout) {
-      setPuckData(layout)
-    } else {
-      setPuckData({ content: [{ type: "SiteHeader", props: {} }, { type: "SiteFooter", props: {} }] })
-    }
+    setPuckData(layout || { content: [{ type: "SiteHeader", props: {} }, { type: "SiteFooter", props: {} }] })
   }, [selectedTheme, activeRoute, initialLayouts])
 
   async function handleSave() {
@@ -279,7 +281,6 @@ export default function PuckThemeEditor({
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 100px)" }}>
       <Puck
-        key={`${selectedTheme?.id}-${activeRoute}`}
         config={{
           components: publicPuckComponents,
           root: { fields: [] },
