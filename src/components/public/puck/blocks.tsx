@@ -147,24 +147,24 @@ function SiteHeaderBlock(props: any) {
   const kec = sebutanKecamatan || "Kec."
 
   return (
-    <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 32, marginBottom: 22, fontFamily: T.font }}>
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 16, textDecoration: "none", color: T.text }}>
-        {logo && <span style={{ width: 58, height: 58, display: "grid", placeItems: "center", flex: "0 0 auto" }}>
-          <img src={logo} alt={villageName} style={{ maxWidth: 58, maxHeight: 58, objectFit: "contain" }} />
+    <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginBottom: 20, fontFamily: T.font }}>
+      <div style={{ display: "inline-flex", alignItems: "center", gap: 12, textDecoration: "none", color: T.text, flex: 1 }}>
+        {logo && <span style={{ width: 48, height: 48, display: "grid", placeItems: "center", flex: "0 0 auto" }}>
+          <img src={logo} alt={villageName} style={{ maxWidth: 48, maxHeight: 48, objectFit: "contain" }} />
         </span>}
         <span>
-          <strong style={{ display: "block", fontSize: 25, lineHeight: "1.05", letterSpacing: 0 }}>
-            {`WEBSITE RESMI KELURAHAN ${villageName}`.toUpperCase()}
+          <strong style={{ display: "block", fontSize: 18, lineHeight: "1.15", letterSpacing: 0, color: T.text }}>
+            {`WEBSITE RESMI ${villageName}`.toUpperCase()}
           </strong>
-          <small style={{ display: "block", marginTop: 8, color: "#687083", fontSize: 15, fontWeight: 700, textTransform: "uppercase" }}>
-            Kec. {kecName || "-"} Kab. {kabName || "-"}{provName ? ` Prov. ${provName}` : ""}
+          <small style={{ display: "block", marginTop: 4, color: "#6e7a8a", fontSize: 13, fontWeight: 600, textTransform: "uppercase" }}>
+            {kecName ? `${kec || "Kec."} ${kecName}` : ""}{kabName ? ` Kab. ${kabName}` : ""}{provName ? ` Prov. ${provName}` : ""}
           </small>
         </span>
       </div>
-      <form style={{ width: "min(510px, 42vw)", height: 58, display: "flex", alignItems: "center", gap: 14, paddingLeft: 20, border: "1px solid #d5dce4", borderRadius: 10, background: "#fff", boxShadow: "0 10px 26px rgba(30,50,80,.04)" }} action="/" method="get">
-        <i className="fa fa-search" style={{ color: "#697386", fontSize: 20 }} />
-        <input name="cari" placeholder="Cari artikel, berita, informasi..." style={{ flex: 1, height: "100%", border: 0, outline: 0, color: T.text, fontSize: 16, background: "transparent" }} />
-        <button type="submit" aria-label="Cari" style={{ width: 94, height: 58, border: 0, borderRadius: "0 10px 10px 0", background: "linear-gradient(135deg,#138943,#00633f)", color: "#fff", fontSize: 24 }}><i className="fa fa-search" /></button>
+      <form style={{ width: "min(420px, 38vw)", height: 52, display: "flex", alignItems: "center", gap: 10, paddingLeft: 16, border: "1px solid #dde4ea", borderRadius: 8, background: "#fff", boxShadow: "0 8px 20px rgba(30,50,80,.03)" }} action="/" method="get">
+        <i className="fa fa-search" style={{ color: "#7a8595", fontSize: 18 }} />
+        <input name="cari" placeholder="Cari..." style={{ flex: 1, height: "100%", border: 0, outline: 0, color: T.text, fontSize: 15, background: "transparent" }} />
+        <button type="submit" aria-label="Cari" style={{ width: 82, height: 52, border: 0, borderRadius: "0 8px 8px 0", background: "linear-gradient(135deg,#138943,#00633f)", color: "#fff", fontSize: 20, cursor: "pointer" }}><i className="fa fa-search" /></button>
       </form>
     </header>
   )
@@ -270,12 +270,13 @@ function HeroCardBlock(props: any) {
 // ── SectionHeader ───────────────────────────────────────────────────
 
 function SectionHeaderBlock(props: any) {
-  const { title, icon, showAction = false, actionText = "Lihat Semua", actionLink = "#" } = props
+  const { title, icon, showAction = "false", actionText = "Lihat Semua", actionLink = "#" } = props
+  const show = showAction === true || showAction === "true"
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 20, margin: "32px 0 14px", fontFamily: T.font }}>
-      {icon && <span style={{ width: 80, height: 50, display: "grid", placeItems: "center", borderRadius: 9, color: T.green, background: T.greenSoft, fontSize: 25 }}><i className={`fa ${icon}`} /></span>}
-      <h2 style={{ margin: 0, flex: 1, color: T.text, fontSize: 26, fontWeight: 900, textTransform: "uppercase" }}>{title}</h2>
-      {showAction && <a href={actionLink} style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 45, padding: "0 17px", border: "1px solid #91d3a8", borderRadius: 8, color: T.green, background: "#fff", fontWeight: 800, textDecoration: "none", fontSize: 14 }}>{actionText}</a>}
+    <div style={{ display: "flex", alignItems: "center", gap: 16, margin: "28px 0 14px", fontFamily: T.font }}>
+      {icon && <span style={{ width: 44, height: 44, display: "grid", placeItems: "center", borderRadius: 10, color: T.green, background: T.greenSoft, fontSize: 22 }}><i className={`fa ${icon}`} /></span>}
+      <h2 style={{ margin: 0, flex: 1, color: T.text, fontSize: 22, fontWeight: 900, textTransform: "uppercase" }}>{title}</h2>
+      {show && <a href={actionLink} style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 38, padding: "0 14px", border: "1px solid #b8dcc6", borderRadius: 8, color: T.green, background: "#fff", fontWeight: 800, textDecoration: "none", fontSize: 13, whiteSpace: "nowrap" }}>{actionText} <i className="fa fa-angle-right" style={{ fontSize: 12 }} /></a>}
     </div>
   )
 }
@@ -285,7 +286,6 @@ function SectionHeaderBlock(props: any) {
 function FeaturedArticleBlock(props: any) {
   const ctx = useCtx(props)
   const { image, category, title, excerpt, date, author, link = "#" } = props
-  // Fall back to context article when no static props provided
   const article: any = ctx.article || (ctx.articles || [])[0]
   const imgSrc = image || (article?.gambar ? (article.gambar.startsWith("http") || article.gambar.startsWith("/") ? article.gambar : `/desa/upload/artikel/${article.gambar}`) : null)
   const cat = category || article?.kategori?.kategori
@@ -293,17 +293,18 @@ function FeaturedArticleBlock(props: any) {
   const exc = excerpt || (article?.isi ? article.isi.replace(/<[^>]*>/g, "").slice(0, 210) : null)
   const dt = date || (article?.tgl_upload ? new Date(article.tgl_upload).toLocaleDateString("id-ID", { year: "numeric", month: "long", day: "numeric" }) : null)
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "445px minmax(0,1fr)", gap: 28, padding: 14, border: `1px solid ${T.line}`, borderRadius: 14, background: "#fff", boxShadow: T.shadow, fontFamily: T.font }}>
-      <div style={{ display: "block", height: 232, overflow: "hidden", borderRadius: 10 }}>
-        {imgSrc && <img src={imgSrc} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+    <div style={{ display: "grid", gridTemplateColumns: "380px minmax(0,1fr)", gap: 24, padding: 16, border: `1px solid ${T.line}`, borderRadius: 14, background: "#fff", boxShadow: T.shadow, fontFamily: T.font }}>
+      <div style={{ height: 210, overflow: "hidden", borderRadius: 10 }}>
+        {imgSrc ? <img src={imgSrc} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ height: "100%", background: "#eef2f0", display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8", fontSize: 14 }}>No Image</div>}
       </div>
-      <div style={{ padding: "12px 8px 8px 0" }}>
-        {cat && <span style={{ display: "inline-flex", alignItems: "center", minHeight: 28, padding: "4px 14px", borderRadius: 8, color: T.green, background: T.greenSoft, fontSize: 14, fontWeight: 900, textTransform: "uppercase" }}>{cat}</span>}
-        {ttl && <h3 style={{ margin: "12px 0", fontSize: 22, fontWeight: 900, lineHeight: 1.25 }}><a href={link || `/artikel/${article?.slug || article?.id}`} style={{ color: T.text, textDecoration: "none" }}>{ttl}</a></h3>}
-        {exc && <p style={{ color: "#4f5b6e", fontSize: 16, lineHeight: 1.72, margin: 0 }}>{exc}</p>}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 28, marginTop: 18, color: "#677386", fontSize: 14 }}>
-          {dt && <span><i className="fa fa-calendar" style={{ marginRight: 8 }} />{dt}</span>}
-          {author && <span><i className="fa fa-user" style={{ marginRight: 8 }} />{author}</span>}
+      <div style={{ padding: "4px 4px 4px 0" }}>
+        {cat && <span style={{ display: "inline-block", padding: "4px 12px", borderRadius: 6, color: T.green, background: T.greenSoft, fontSize: 13, fontWeight: 900, textTransform: "uppercase" }}>{cat}</span>}
+        {ttl && <h3 style={{ margin: "10px 0", fontSize: 22, fontWeight: 900, lineHeight: 1.25, color: T.text }}><a href={link || `/artikel/${article?.slug || article?.id}`} style={{ color: "inherit", textDecoration: "none" }}>{ttl}</a></h3>}
+        {exc && <p style={{ color: "#4f5b6e", fontSize: 15, lineHeight: 1.65, margin: 0 }}>{exc}</p>}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 20, marginTop: 16, color: "#8895a4", fontSize: 13 }}>
+          {dt && <span><i className="fa fa-calendar" style={{ marginRight: 6 }} />{dt}</span>}
+          <span><i className="fa fa-user" style={{ marginRight: 6 }} />Admin</span>
+          <span><i className="fa fa-eye" style={{ marginRight: 6 }} />{(article?.hit || 0).toLocaleString("id-ID")}</span>
         </div>
       </div>
     </div>
@@ -326,17 +327,17 @@ function ArticleListBlock(props: any) {
   }
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: `repeat(${columns}, minmax(0,1fr))`, gap: 18, fontFamily: T.font }}>
+    <div style={{ display: "grid", gridTemplateColumns: `repeat(${columns}, minmax(0,1fr))`, gap: 16, fontFamily: T.font }}>
       {articles.map((a: any) => (
-        <article key={a.id} style={{ display: "grid", gridTemplateColumns: show ? "145px minmax(0,1fr)" : "1fr", gap: 16, padding: 12, border: `1px solid ${T.line}`, borderRadius: 14, background: "#fff" }}>
-          {show && imgSrc(a.gambar) && <img src={imgSrc(a.gambar)!} alt="" style={{ height: 118, borderRadius: 9, objectFit: "cover" }} />}
+        <article key={a.id} style={{ display: "grid", gridTemplateColumns: show && imgSrc(a.gambar) ? "130px minmax(0,1fr)" : "1fr", gap: 14, padding: "10px 12px", border: `1px solid ${T.line}`, borderRadius: 12, background: "#fff", transition: "box-shadow .15s" }}>
+          {show && imgSrc(a.gambar) && <img src={imgSrc(a.gambar)!} alt="" style={{ width: "100%", height: 100, borderRadius: 8, objectFit: "cover" }} />}
           <div>
             <span style={{ color: T.green, fontSize: 12, fontWeight: 900, textTransform: "uppercase" }}>{a.kategori?.kategori || "Artikel"}</span>
-            <h3 style={{ margin: "7px 0", fontSize: titleSize, fontWeight: 900, lineHeight: 1.25 }}><a href={`/artikel/${a.slug || a.id}`} style={{ color: T.text, textDecoration: "none" }}>{a.judul}</a></h3>
-            {a.isi && <p style={{ margin: 0, fontSize: excerptSize, lineHeight: 1.5, color: "#4f5b6e" }}>{a.isi.replace(/<[^>]*>/g, "").slice(0, 120)}</p>}
-            <div style={{ display: "flex", gap: 20, marginTop: 10, color: "#94a3b8", fontSize: 12 }}>
-              <span><i className="fa fa-calendar" style={{ marginRight: 6 }} />{a.tgl_upload ? new Date(a.tgl_upload).toLocaleDateString("id-ID") : ""}</span>
-              <span><i className="fa fa-eye" style={{ marginRight: 6 }} />{(a.hit || 0).toLocaleString("id-ID")}</span>
+            <h3 style={{ margin: "6px 0", fontSize: titleSize, fontWeight: 900, lineHeight: 1.2, color: T.text }}><a href={`/artikel/${a.slug || a.id}`} style={{ color: "inherit", textDecoration: "none" }}>{a.judul}</a></h3>
+            {a.isi && <p style={{ margin: 0, fontSize: excerptSize, lineHeight: 1.5, color: "#5e6978" }}>{a.isi.replace(/<[^>]*>/g, "").slice(0, 100)}</p>}
+            <div style={{ display: "flex", gap: 16, marginTop: 8, color: "#94a3b8", fontSize: 12 }}>
+              {a.tgl_upload && <span><i className="fa fa-calendar" style={{ marginRight: 5 }} />{new Date(a.tgl_upload).toLocaleDateString("id-ID")}</span>}
+              <span><i className="fa fa-eye" style={{ marginRight: 5 }} />{(a.hit || 0).toLocaleString("id-ID")}</span>
             </div>
           </div>
         </article>
@@ -440,15 +441,15 @@ function VillageApparatusBlock(props: any) {
   const defaultAvatar = "/themes/natra/assets/images/noimage.png"
 
   return (
-    <div style={{ display: "grid", gap: 14, fontFamily: T.font }}>
+    <div style={{ display: "grid", gap: 12, fontFamily: T.font }}>
       {apparatus.length === 0 ? (
-        <div style={{ padding: 16, textAlign: "center", color: "#94a3b8" }}>Belum ada data perangkat</div>
+        <div style={{ padding: 16, textAlign: "center", color: "#94a3b8", fontSize: 14 }}>Belum ada data perangkat</div>
       ) : apparatus.map((p: any, i: number) => (
-        <div key={i} style={{ display: "flex", alignItems: "center", gap: 13 }}>
-          <img src={p.foto ? `/desa/upload/pamong/${p.foto}` : defaultAvatar} alt={p.pamong_nama || ""} style={{ width: 46, height: 46, borderRadius: 999, objectFit: "cover", background: "#e9f2ec" }} />
+        <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <img src={p.foto ? `/desa/upload/pamong/${p.foto}` : defaultAvatar} alt={p.pamong_nama || ""} style={{ width: 44, height: 44, borderRadius: 999, objectFit: "cover", background: "#eef2f0", flexShrink: 0 }} />
           <span>
-            <strong style={{ display: "block", color: T.text, fontSize: 14 }}>{p.pamong_nama || "-"}</strong>
-            <small style={{ display: "block", color: "#687386", fontSize: 12 }}>{p.ref_jabatan?.nama || (typeof p.jabatan === "string" ? p.jabatan : "-")}</small>
+            <strong style={{ display: "block", color: T.text, fontSize: 14, lineHeight: 1.3 }}>{p.pamong_nama || "-"}</strong>
+            <small style={{ display: "block", color: "#6e7a8a", fontSize: 12, marginTop: 2 }}>{p.ref_jabatan?.nama || (typeof p.jabatan === "string" ? p.jabatan : "-")}</small>
           </span>
         </div>
       ))}
@@ -462,7 +463,7 @@ function LoginWidgetBlock(props: any) {
   const { title = "Masuk", selfServiceText = "Layanan Mandiri", selfServiceLink = "/layanan-mandiri", adminText = "Admin", adminLink = "/siteman", selfColor = "linear-gradient(135deg,#3daa46,#2b923e)", adminColor = "linear-gradient(135deg,#006c50,#00513d)" } = props
   return (
     <div style={{ fontFamily: T.font }}>
-      <div style={{ display: "grid", gap: 12 }}>
+      <div style={{ display: "grid", gap: 10 }}>
         <a href={selfServiceLink} style={{ height: 53, display: "flex", alignItems: "center", justifyContent: "center", gap: 16, borderRadius: 7, color: "#fff", fontSize: 16, fontWeight: 900, textTransform: "uppercase", textDecoration: "none", background: selfColor }}><i className="fa fa-user" />{selfServiceText}</a>
         <a href={adminLink} style={{ height: 53, display: "flex", alignItems: "center", justifyContent: "center", gap: 16, borderRadius: 7, color: "#fff", fontSize: 16, fontWeight: 900, textTransform: "uppercase", textDecoration: "none", background: adminColor }}><i className="fa fa-shield" />{adminText}</a>
       </div>
@@ -551,10 +552,10 @@ function SiteFooterBlock(props: any) {
   const villageName = ctx.config.nama_desa || "OpenSID"
   const siteTitle = `Website Resmi Kelurahan ${villageName}`.toUpperCase()
   return (
-    <footer style={{ display: "flex", justifyContent: "space-between", gap: 24, marginTop: 28, padding: "26px 0 10px", color: "#606a79", borderTop: `1px solid ${T.line}`, fontFamily: T.font }}>
+    <footer style={{ display: "flex", justifyContent: "space-between", gap: 24, marginTop: 32, padding: "24px 0 10px", color: "#6e7a8a", borderTop: `1px solid ${T.line}`, fontFamily: T.font, fontSize: 14 }}>
       <div>
-        <strong style={{ color: T.text }}>{siteTitle}</strong>
-        <p style={{ margin: "8px 0 0" }}>{teks || `${ctx.config.alamat_kantor || "-"} · Kec. ${ctx.config.nama_kecamatan || "-"} · Kab. ${ctx.config.nama_kabupaten || "-"}`}</p>
+        <strong style={{ color: T.text, fontSize: 15 }}>{siteTitle}</strong>
+        <p style={{ margin: "8px 0 0", lineHeight: 1.6 }}>{teks || `${ctx.config.alamat_kantor || "-"} · Kec. ${ctx.config.nama_kecamatan || "-"} · Kab. ${ctx.config.nama_kabupaten || "-"}`}</p>
       </div>
     </footer>
   )

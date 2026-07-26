@@ -196,9 +196,14 @@ export default function PuckThemeEditor({
     if (!newName.trim()) return
     setCreating(true)
     try {
-      await createVisualTheme(newName)
+      const res = await createVisualTheme(newName)
       showToast("Tema visual berhasil dibuat")
       setNewName("")
+      // Select the new theme and route right away
+      const newTheme = { id: res.themeId, nama: newName, status: 0, renderer: "puck" as const }
+      setSelectedTheme(newTheme)
+      setActiveRoute("home")
+      router.refresh()
     } catch (e: any) {
       showToast(e.message || "Gagal membuat tema")
     } finally {
