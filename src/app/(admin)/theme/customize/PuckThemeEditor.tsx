@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { Puck, usePuck, fieldsPlugin } from "@puckeditor/core"
 import "@puckeditor/core/dist/index.css"
 import { publicPuckComponents, PUCK_CATEGORIES } from "@/components/public/puck/config"
+import { deduplicatePuckLayout } from "@/components/public/puck/blocks"
 import { BUILTIN_PAGES, pagePathFor } from "@/lib/themePuck"
 import { savePuckLayout, createVisualTheme, activateVisualTheme, restoreStarterLayout, createCustomPage } from "./actions"
 
@@ -143,7 +144,7 @@ export default function PuckThemeEditor({
   // Derive puck data directly from selectedTheme + activeRoute + initialLayouts
   const puckKey = selectedTheme ? `${selectedTheme.id}-${activeRoute}` : ""
   const initialPuckData = puckKey && initialLayouts[puckKey]
-    ? initialLayouts[puckKey]
+    ? deduplicatePuckLayout(initialLayouts[puckKey])
     : { content: [{ type: "SiteHeader", props: {} }, { type: "SiteFooter", props: {} }] }
   const [puckData, setPuckData] = useState<any>(initialPuckData)
   const [saving, setSaving] = useState(false)
@@ -180,14 +181,14 @@ export default function PuckThemeEditor({
     if (!selectedTheme) return
     const key = `${selectedTheme.id}-${activeRoute}`
     const layout = initialLayouts[key]
-    setPuckData(layout || { content: [{ type: "SiteHeader", props: {} }, { type: "SiteFooter", props: {} }] })
+    setPuckData(deduplicatePuckLayout(layout || { content: [{ type: "SiteHeader", props: {} }, { type: "SiteFooter", props: {} }] }))
   }, [selectedTheme, activeRoute, initialLayouts])
 
   async function handleSave() {
     if (!selectedTheme) return
     setSaving(true)
     try {
-      await savePuckLayout({ themeId: selectedTheme.id, routeKey: activeRoute, data: puckData })
+      await savePuckLayout({ themeId: selectedTheme.id, routeKey: activeRoute, data: deduplicatePuckLayout(puckData) })
       showToast("Layout berhasil disimpan")
       router.refresh()
     } catch (e: any) {

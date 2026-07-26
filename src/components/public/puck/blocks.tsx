@@ -38,6 +38,22 @@ export function parseCustomCss(css: string): Record<string, string> {
   return out
 }
 
+
+// ── Deduplicate blocks — safety net against stale state corrupting layouts
+export function deduplicatePuckLayout(data: any): any {
+  if (!data?.content) return data
+  const seen = new Set<string>()
+  const deduped = data.content.filter((b: any) => {
+    const key = b.type
+    if (key === "SiteFooter" || key === "SiteHeader") {
+      if (seen.has(key)) return false
+      seen.add(key)
+    }
+    return true
+  })
+  return { ...data, content: deduped }
+}
+
 export function buildWrapperStyle(props: any): Record<string, any> {
   const s: Record<string, any> = { position: "relative" }
   if (props._padding != null) s.padding = props._padding
