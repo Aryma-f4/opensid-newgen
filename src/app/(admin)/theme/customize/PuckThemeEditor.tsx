@@ -244,6 +244,7 @@ export default function PuckThemeEditor({
     try {
       await restoreStarterLayout(selectedTheme.id, activeRoute)
       showToast("Layout awal dipulihkan")
+      router.refresh()
     } catch (e: any) {
       showToast(e.message || "Gagal memulihkan")
     }
@@ -278,6 +279,7 @@ export default function PuckThemeEditor({
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 100px)" }}>
       <Puck
+        key={`${selectedTheme?.id}-${activeRoute}`}
         config={{
           components: publicPuckComponents,
           root: { fields: [] },
