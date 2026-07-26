@@ -1,11 +1,13 @@
 "use client"
 
-// Silence React key warnings from Puck internal components (StaticLayerTreeItems, DropZoneEditInternal)
+// Silence React warnings from Puck internal components (harmless dev-only)
 if (typeof window !== "undefined") {
   const origError = console.error
   console.error = (...args: any[]) => {
     const msg = typeof args[0] === "string" ? args[0] : ""
-    if (msg.includes("Each child in a list should have a unique \"key\" prop")) return
+    // Puck internal: tree key warning, drag-n-drop effect warning
+    if (msg.includes("Each child in a list should have a unique")) return
+    if (msg.includes("useInsertionEffect must not schedule")) return
     origError.apply(console, args)
   }
 }
