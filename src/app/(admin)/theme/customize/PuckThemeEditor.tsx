@@ -131,16 +131,6 @@ function EditorToolbar({
 
 // ── Main Editor ──────────────────────────────────────────────────────
 
-// Puck sub-components (exist at runtime via Puck.Preview and Puck.Fields)
-function PuckPreviewComponent() {
-  const Preview = (Puck as any).Preview
-  return Preview ? <Preview /> : null
-}
-function PuckFieldsComponent() {
-  const Fields = (Puck as any).Fields
-  return Fields ? <Fields /> : null
-}
-
 export default function PuckThemeEditor({
   themes,
   initialLayouts,
@@ -291,10 +281,24 @@ export default function PuckThemeEditor({
           await handleSave()
         }}
         plugins={[fieldsPlugin()]}
-      >
-        <PuckPreviewComponent />
-        <PuckFieldsComponent />
-      </Puck>
+        renderHeader={() => (
+          <EditorToolbar
+            themes={themes}
+            selectedTheme={selectedTheme}
+            onSelectTheme={setSelectedTheme}
+            activeRoute={activeRoute}
+            onSelectRoute={setActiveRoute}
+            pages={pages}
+            onAddPage={handleAddPage}
+            isPreview={isPreview}
+            onTogglePreview={() => setIsPreview(!isPreview)}
+            onSave={handleSave}
+            onRestore={handleRestore}
+            onActivate={handleActivate}
+            saving={saving}
+          />
+        )}
+      />
 
       {toast && (
         <div style={{
