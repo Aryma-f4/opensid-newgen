@@ -6,7 +6,7 @@ import { Puck, usePuck, fieldsPlugin } from "@puckeditor/core"
 import "@puckeditor/core/dist/index.css"
 import { publicPuckComponents, PUCK_CATEGORIES } from "@/components/public/puck/config"
 import { deduplicatePuckLayout } from "@/components/public/puck/blocks"
-import { BUILTIN_PAGES, pagePathFor } from "@/lib/themePuck"
+import { BUILTIN_PAGES, pagePathFor, starterPuckData } from "@/lib/themePuck"
 import { savePuckLayout, createVisualTheme, activateVisualTheme, restoreStarterLayout, createCustomPage } from "./actions"
 
 const VIEWPORT_SIZES = {
@@ -245,6 +245,10 @@ export default function PuckThemeEditor({
   async function handleRestore() {
     if (!selectedTheme) return
     try {
+      // Reset preview IMMEDIATELY with starter data, don't wait for DB
+      const starter = starterPuckData(activeRoute)
+      setPuckData(starter)
+      // Then persist to DB server-side
       await restoreStarterLayout(selectedTheme.id, activeRoute)
       showToast("Layout awal dipulihkan")
       router.refresh()
