@@ -1,4 +1,8 @@
 import { prisma } from "./prisma"
+import {
+  getConfig, getMenu, getArticles, getCategories,
+  getPamong, getSocialMedia, getRunningText, getStatistics,
+} from "./helpers"
 
 export type ThemeMode = "legacy" | "puck"
 
@@ -71,4 +75,33 @@ export function selectPublicRenderer(
 
 export function isAdminRoute(pathname: string): boolean {
   return pathname.startsWith("/admin") || pathname.startsWith("/siteman")
+}
+
+/**
+ * Build the full public theme context used by Puck blocks.
+ */
+export async function buildPublicContext(routeKey: string) {
+  const [config, menu, articleResult, categories, pamong, sosmed, runningText, stats] = await Promise.all([
+    getConfig(),
+    getMenu(),
+    getArticles(1, 10),
+    getCategories(),
+    getPamong(),
+    getSocialMedia(),
+    getRunningText(),
+    getStatistics(),
+  ])
+
+  return {
+    routeKey: routeKey as any,
+    config: config ?? {},
+    articles: articleResult.articles,
+    article: articleResult.articles[0] ?? null,
+    categories,
+    statistics: stats,
+    apparatus: pamong,
+    socialMedia: sosmed,
+    runningText,
+    menu,
+  } as any
 }

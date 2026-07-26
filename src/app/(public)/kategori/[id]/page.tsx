@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import Link from "next/link"
+import { resolvePublicTheme, loadThemeLayout, buildPublicContext } from "@/lib/publicTheme"
+import PublicThemeRenderer from "@/components/public/PublicThemeRenderer"
 
 export const dynamic = "force-dynamic"
 
@@ -8,6 +10,22 @@ export default async function KategoriPage({ params }: { params: Promise<{ id: s
   const { id } = await params
   const kategori = await prisma.kategori.findUnique({ where: { id: parseInt(id) } })
   if (!kategori) notFound()
+
+  const theme = await resolvePublicTheme(1)
+  if (theme.mode === "puck") {
+    const [layout, ctx] = await Promise.all([
+      loadThemeLayout(1, theme.themeId, "category-list"),
+      buildPublicContext("category-list"),
+    ])
+    return (
+      <PublicThemeRenderer
+        routeKey="category-list"
+        renderer={layout ? "puck" : "puck-fallback"}
+        context={ctx}
+        data={layout}
+      />
+    )
+  }
 
   const artikel = await prisma.artikel.findMany({
     where: { id_kategori: kategori.id, enabled: 1 },

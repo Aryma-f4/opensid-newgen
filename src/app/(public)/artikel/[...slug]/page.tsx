@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import Link from "next/link"
+import { resolvePublicTheme, loadThemeLayout, buildPublicContext } from "@/lib/publicTheme"
+import PublicThemeRenderer from "@/components/public/PublicThemeRenderer"
 
 export const dynamic = "force-dynamic"
 
@@ -23,6 +25,23 @@ export default async function ArtikelDetail({ params }: { params: Promise<{ slug
   if (!artikel) notFound()
 
   await prisma.artikel.update({ where: { id: artikel.id }, data: { hit: (artikel.hit ?? 0) + 1 } })
+
+  const theme = await resolvePublicTheme(1)
+  if (theme.mode === "puck") {
+    const [layout, ctx] = await Promise.all([
+      loadThemeLayout(1, theme.themeId, "article-detail"),
+      buildPublicContext("article-detail"),
+    ])
+    ctx.article = artikel as any
+    return (
+      <PublicThemeRenderer
+        routeKey="article-detail"
+        renderer={layout ? "puck" : "puck-fallback"}
+        context={ctx}
+        data={layout}
+      />
+    )
+  }
 
   return (
     <>

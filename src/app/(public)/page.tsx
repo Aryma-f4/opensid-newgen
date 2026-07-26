@@ -1,5 +1,7 @@
 import Link from "next/link"
 import { getArticles, getConfig, getHeadline, getSlideShows } from "@/lib/helpers"
+import { resolvePublicTheme, loadThemeLayout, buildPublicContext } from "@/lib/publicTheme"
+import PublicThemeRenderer from "@/components/public/PublicThemeRenderer"
 
 export const dynamic = "force-dynamic"
 
@@ -8,6 +10,24 @@ type Article = Awaited<ReturnType<typeof getArticles>>["articles"][number]
 const fallbackImage = "/assets/images/latar_login.jpg"
 
 export default async function Home() {
+  const theme = await resolvePublicTheme(1)
+
+  // Puck mode — render saved visual layout
+  if (theme.mode === "puck") {
+    const [layout, ctx] = await Promise.all([
+      loadThemeLayout(1, theme.themeId, "home"),
+      buildPublicContext("home"),
+    ])
+    return (
+      <PublicThemeRenderer
+        routeKey="home"
+        renderer={layout ? "puck" : "puck-fallback"}
+        context={ctx}
+        data={layout}
+      />
+    )
+  }
+
   const [config, headline, articleResult, slides] = await Promise.all([
     getConfig(),
     getHeadline(),

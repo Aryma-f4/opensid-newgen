@@ -17,16 +17,16 @@ export type PublicThemeContext = {
   articles?: {
     id: number
     judul: string
-    slug?: string
-    isi?: string
+    slug?: string | null
+    isi?: string | null
     gambar?: string | null
     tgl_upload: Date | null
   }[]
   article?: {
     id: number
     judul: string
-    slug?: string
-    isi: string
+    slug?: string | null
+    isi: string | null
     gambar?: string | null
     tgl_upload: Date | null
   } | null

@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
-import { parsePuckLayout, isPublicRouteKey, starterPuckData, PUCK_ROUTE_KEYS } from "@/lib/themePuck"
+import { parsePuckLayout, isValidRouteKey, starterPuckData, PUCK_ROUTE_KEYS } from "@/lib/themePuck"
 
 async function requireAdmin() {
   const session = await auth()
@@ -22,7 +22,7 @@ export async function savePuckLayout(input: {
 }) {
   await requireAdmin()
 
-  if (!isPublicRouteKey(input.routeKey)) {
+  if (!isValidRouteKey(input.routeKey)) {
     throw new Error("Route key tidak valid")
   }
 
@@ -109,7 +109,7 @@ export async function activateVisualTheme(themeId: string) {
 
 export async function restoreStarterLayout(themeId: string, routeKey: string) {
   await requireAdmin()
-  if (!isPublicRouteKey(routeKey)) throw new Error("Route key tidak valid")
+  if (!isValidRouteKey(routeKey)) throw new Error("Route key tidak valid")
 
   const data = starterPuckData(routeKey)
   const id = BigInt(themeId)
@@ -123,4 +123,49 @@ export async function restoreStarterLayout(themeId: string, routeKey: string) {
 
   revalidatePath("/theme/customize")
   return { success: true }
+}
+
+// ── Custom pages (public only — admin routes never allowed) ─────────
+
+export async function listCustomPages(themeId: string) {
+  await requireAdmin()
+  const rows = await prisma.theme_page_layouts.findMany({
+    where: { theme_id: BigInt(themeId) },
+    select: { route_key: true },
+  })
+  const builtin = new Set<string>(PUCK_ROUTE_KEYS)
+  return rows
+    .map((r: any) => r.route_key as string)
+    .filter((k: string) => !builtin.has(k) && isValidRouteKey(k))
+}
+
+export async function createCustomPage(themeId: string, name: string) {
+  await requireAdmin()
+  const slug = name.trim().toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+  if (!slug || !isValidRouteKey(slug) || (PUCK_ROUTE_KEYS as readonly string[]).includes(slug)) {
+    throw new Error("Nama halaman tidak valid atau sudah dipakai")
+  }
+
+  const id = BigInt(themeId)
+  const existing = await prisma.theme_page_layouts.findFirst({
+    where: { theme_id: id, route_key: slug },
+  })
+  if (existing) throw new Error("Halaman sudah ada")
+
+  await prisma.theme_page_layouts.create({
+    data: {
+      config_id: getConfigId(await requireAdmin()),
+      theme_id: id,
+      route_key: slug,
+      puck_data: starterPuckData(slug) as any,
+    },
+  })
+
+  revalidatePath("/theme/customize")
+  revalidatePath(`/p/${slug}`)
+  return { success: true, routeKey: slug }
 }
