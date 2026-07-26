@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Puck, usePuck, fieldsPlugin } from "@puckeditor/core"
 import "@puckeditor/core/dist/index.css"
-import { publicPuckComponents, PUCK_CATEGORIES } from "@/components/public/puck/config"
+import { publicPuckComponents } from "@/components/public/puck/config"
 import { BUILTIN_PAGES, pagePathFor } from "@/lib/themePuck"
 import { savePuckLayout, createVisualTheme, activateVisualTheme, restoreStarterLayout, createCustomPage } from "./actions"
 
@@ -272,7 +272,6 @@ export default function PuckThemeEditor({
         config={{
           components: publicPuckComponents,
           root: { fields: [] },
-          categories: Object.entries(PUCK_CATEGORIES).map(([label, components]) => ({ label, components })),
         } as any}
         data={puckData}
         onChange={(data: any) => setPuckData(data)}

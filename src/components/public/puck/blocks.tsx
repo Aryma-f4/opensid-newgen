@@ -912,7 +912,7 @@ export const BLOCK_FIELDS: Record<string, { label: string; fields: any[] }> = {
   Text: {
     label: "Teks",
     fields: [
-      { name: "text", label: "Teks", type: "textarea" as const, defaultValue: "Teks paragraf" },
+      { name: "text", label: "Teks", type: "text" as const, defaultValue: "Teks paragraf" },
       { name: "as", label: "Elemen HTML", type: "select" as const, options: [{ value: "p", label: "Paragraf (p)" }, { value: "span", label: "Span (inline)" }, { value: "strong", label: "Tebal (strong)" }, { value: "em", label: "Miring (em)" }, { value: "small", label: "Kecil (small)" }, { value: "mark", label: "Sorot (mark)" }, { value: "u", label: "Garis Bawah (u)" }, { value: "s", label: "Coret (s)" }], defaultValue: "p" },
       { name: "align", label: "Rata", type: "select" as const, options: [{ value: "left", label: "Kiri" }, { value: "center", label: "Tengah" }, { value: "right", label: "Kanan" }], defaultValue: "left" },
       { name: "color", label: "Warna", type: "text" as const },
