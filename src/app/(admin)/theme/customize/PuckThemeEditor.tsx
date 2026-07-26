@@ -285,23 +285,22 @@ export default function PuckThemeEditor({
           fieldTypes: {
             custom: function ColorField({ value, onChange }: any) {
               return (
-                /* Color swatch button — click to open native OS color picker via dynamically created input */
                 <div style={{ display: "flex", gap: 8, alignItems: "center", padding: "4px 0" }}>
-                  <div
-                    onClick={(e: any) => {
-                      e.stopPropagation()
-                      const p = document.createElement("input")
-                      p.type = "color"
-                      p.value = value || "#000000"
-                      p.addEventListener("input", (ev: any) => onChange?.(ev.target.value))
-                      p.click()
-                    }}
-                    style={{ width: 56, height: 42, border: "2px solid #d1d5db", borderRadius: 8, background: value || "#000000", cursor: "pointer", display: "block", flexShrink: 0 }}
+                  <input
+                    type="color"
+                    value={value || "#000000"}
+                    onChange={(e: any) => { e.stopPropagation(); onChange?.(e.target.value) }}
+                    onBlur={(e: any) => e.stopPropagation()}
+                    onClick={(e: any) => e.stopPropagation()}
+                    onMouseDown={(e: any) => e.stopPropagation()}
+                    style={{ width: 56, height: 42, border: "2px solid #d1d5db", cursor: "pointer", padding: 2, borderRadius: 8, background: "#fff" }}
                   />
                   <input
                     type="text"
                     value={value || ""}
-                    onChange={(e: any) => { e.stopPropagation(); onChange?.(e.target.value) }}
+                    onBlur={(e: any) => { e.stopPropagation(); onChange?.(e.target.value) }}
+                    onKeyDown={(e: any) => { if (e.key === "Enter") { e.stopPropagation(); onChange?.(e.target.value) } }}
+                    onChange={(e: any) => { e.stopPropagation() }}
                     style={{ flex: 1, padding: "8px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontFamily: "monospace", fontSize: 13 }}
                   />
                 </div>
