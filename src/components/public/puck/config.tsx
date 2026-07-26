@@ -12,7 +12,7 @@ export const STYLE_FIELDS = [
   { name: "_margin", label: "Margin (px)", type: "number" as const },
   { name: "_marginTop", label: "Margin Atas (px)", type: "number" as const },
   { name: "_marginBottom", label: "Margin Bawah (px)", type: "number" as const },
-  { name: "_background", label: "Background", type: "text" as const },
+  { name: "_background", label: "Background (hex #)", type: "text" as const },
   { name: "_color", label: "Warna Teks", type: "text" as const },
   { name: "_fontSize", label: "Ukuran Font (px)", type: "number" as const },
   { name: "_fontWeight", label: "Ketebalan Font", type: "number" as const },

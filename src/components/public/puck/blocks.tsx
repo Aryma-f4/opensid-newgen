@@ -600,11 +600,12 @@ function SidebarWidgetBlock(props: any) {
 // ── Atomic Blocks (Elementor-style, slice of homepage elements) ─────
 
 function TextBlock(props: any) {
-  const { text = "Teks paragraf", as = "p", align = "left", color = T.text, fontSize = 16, fontWeight = 400, lineHeight = 1.7, fontStyle, textDecoration, letterSpacing, textTransform } = props
+  const { text, as = "p", align = "left", color = T.text, fontSize = 16, fontWeight = 400, lineHeight = 1.7, fontStyle, textDecoration, letterSpacing, textTransform } = props
+  const displayText = text || "Teks paragraf"
   const Tag = ["p", "span", "strong", "em", "small", "mark", "u", "s"].includes(as) ? as : "p"
   const style: Record<string, any> = { margin: 0, color, fontSize, fontWeight, lineHeight, fontStyle, textDecoration, letterSpacing, textTransform, fontFamily: T.font }
   if (Tag === "p") style.textAlign = align
-  return <Tag style={style as any}>{text}</Tag>
+  return <Tag style={style as any}>{displayText}</Tag>
 }
 
 function IconBlock(props: any) {
@@ -915,7 +916,7 @@ export const BLOCK_FIELDS: Record<string, { label: string; fields: any[] }> = {
       { name: "text", label: "Teks", type: "text" as const, defaultValue: "Teks paragraf" },
       { name: "as", label: "Elemen HTML", type: "select" as const, options: [{ value: "p", label: "Paragraf (p)" }, { value: "span", label: "Span (inline)" }, { value: "strong", label: "Tebal (strong)" }, { value: "em", label: "Miring (em)" }, { value: "small", label: "Kecil (small)" }, { value: "mark", label: "Sorot (mark)" }, { value: "u", label: "Garis Bawah (u)" }, { value: "s", label: "Coret (s)" }], defaultValue: "p" },
       { name: "align", label: "Rata", type: "select" as const, options: [{ value: "left", label: "Kiri" }, { value: "center", label: "Tengah" }, { value: "right", label: "Kanan" }], defaultValue: "left" },
-      { name: "color", label: "Warna", type: "text" as const },
+      { name: "color", label: "Warna (hex #)", type: "text" as const },
       { name: "fontSize", label: "Ukuran Font (px)", type: "number" as const, defaultValue: 16 },
       { name: "fontWeight", label: "Ketebalan Font", type: "number" as const, defaultValue: 400 },
       { name: "lineHeight", label: "Line Height", type: "number" as const, defaultValue: 1.7 },
