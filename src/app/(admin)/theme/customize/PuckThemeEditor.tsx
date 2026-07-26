@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect, use, useCallback } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Puck, Render } from "@puckeditor/core"
+import "@puckeditor/core/dist/index.css"
 import { publicPuckComponents, PUCK_CATEGORIES } from "@/components/public/puck/config"
 import { editorPreviewContext } from "@/components/public/puck/types"
 import type { PublicRouteKey } from "@/lib/themePuck"
@@ -187,7 +188,7 @@ export default function PuckThemeEditor({
       </div>
 
       {/* Puck Editor */}
-      <div style={{ flex: 1, overflow: "hidden" }}>
+      <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
         <Puck
           config={{
             components: publicPuckComponents,
@@ -195,7 +196,9 @@ export default function PuckThemeEditor({
             categories: PUCK_CATEGORIES,
           } as any}
           data={puckData}
-          onChange={(data: any) => setPuckData(data)}
+          onChange={(data: any) => {
+            setPuckData(data)
+          }}
           onPublish={async (data: any) => {
             setPuckData(data)
             await handleSave()
