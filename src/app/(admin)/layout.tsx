@@ -5,6 +5,7 @@ import { getSetting } from "@/lib/helpers"
 import { prisma } from "@/lib/prisma"
 import Sidebar from "@/components/admin/Sidebar"
 import Topbar from "@/components/admin/Topbar"
+import { ToastProvider } from "@/components/admin/Toast"
 
 export const dynamic = "force-dynamic"
 
@@ -38,7 +39,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
         <div className="content-wrapper">
           <section id="maincontent" className="content">
-            {children}
+            <ToastProvider>{children}</ToastProvider>
           </section>
         </div>
 

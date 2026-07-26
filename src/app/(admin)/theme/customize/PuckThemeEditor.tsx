@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Puck, Render } from "@puckeditor/core"
+import { Puck, Render, blocksPlugin, fieldsPlugin, outlinePlugin } from "@puckeditor/core"
 import "@puckeditor/core/dist/index.css"
 import { publicPuckComponents, PUCK_CATEGORIES } from "@/components/public/puck/config"
 import { editorPreviewContext } from "@/components/public/puck/types"
@@ -187,8 +187,8 @@ export default function PuckThemeEditor({
         <button onClick={handleSave} disabled={saving} className="btn btn-primary btn-sm">{saving ? "Menyimpan..." : "Simpan"}</button>
       </div>
 
-      {/* Puck Editor */}
-      <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
+      {/* Puck Editor — full drag-and-drop visual builder */}
+      <div style={{ flex: 1, position: "relative" }}>
         <Puck
           config={{
             components: publicPuckComponents,
@@ -203,6 +203,7 @@ export default function PuckThemeEditor({
             setPuckData(data)
             await handleSave()
           }}
+          plugins={[blocksPlugin(), fieldsPlugin(), outlinePlugin()]}
         />
       </div>
 

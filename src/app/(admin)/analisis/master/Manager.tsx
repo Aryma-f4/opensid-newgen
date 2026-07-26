@@ -20,8 +20,8 @@ const columns = [
   { key: "subjek_tipe", label: "Subjek", render: (r: MasterType) => r.analisis_ref_subjek?.subjek ?? "-" },
   { key: "deskripsi", label: "Deskripsi", render: (r: MasterType) => <span className="text-gray-500 text-xs max-w-xs truncate block">{r.deskripsi}</span> },
   { key: "lock", label: "Status", render: (r: MasterType) => r.lock ? <span className="label label-success">Aktif</span> : <span className="label label-default">Non-aktif</span> },
-  { key: "_count", label: "Indikator", render: (r: MasterType) => r._count.analisis_indikator },
-  { key: "_count", label: "Periode", render: (r: MasterType) => r._count.analisis_periode },
+  { key: "jml_indikator", label: "Indikator", render: (r: MasterType) => r._count.analisis_indikator },
+  { key: "jml_periode", label: "Periode", render: (r: MasterType) => r._count.analisis_periode },
 ]
 
 const fields = [

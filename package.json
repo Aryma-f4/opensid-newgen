@@ -13,6 +13,7 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
     "@prisma/client": "~6.6.0",
+    "@puckeditor/core": "^0.22.2",
     "@types/leaflet": "^1.9.21",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",

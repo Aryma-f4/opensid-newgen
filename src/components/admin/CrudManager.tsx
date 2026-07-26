@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react"
 import DataTable, { Column, RowAction, BulkAction, ImportConfig } from "./DataTable"
 import FormModal, { Field } from "./FormModal"
+import { useToast } from "./Toast"
 
 type Props<T> = {
   title: string
@@ -39,12 +40,14 @@ export default function CrudManager<T extends Record<string, any>>({
   const [editing, setEditing] = useState<T | null>(null)
   const [reloadKey, setReloadKey] = useState(0)
 
+  const { toast } = useToast()
   const reload = useCallback(() => setReloadKey((k) => k + 1), [])
 
   async function del(id: string | number) {
     if (!confirm("Hapus data ini?")) return
     const res = await fetch(`${endpoint}/${id}`, { method: "DELETE" })
-    if (!res.ok) { alert("Gagal: " + await res.text()); return }
+    if (!res.ok) { toast("error", "Gagal menghapus: " + await res.text()); return }
+    toast("success", "Data berhasil dihapus")
     reload()
   }
 
@@ -54,7 +57,8 @@ export default function CrudManager<T extends Record<string, any>>({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ids }),
     })
-    if (!res.ok) { alert("Gagal: " + await res.text()); return }
+    if (!res.ok) { toast("error", "Gagal: " + await res.text()); return }
+    toast("success", `${ids.length} data berhasil dihapus`)
     reload()
   }
 
