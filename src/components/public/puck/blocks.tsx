@@ -361,7 +361,7 @@ function ArticleListBlock(props: any) {
 
 function ArticleDetailBlock(props: any) {
   const ctx = useCtx(props)
-  const article = ctx.article
+  const article: any = ctx.article
   if (!article) return <div style={{ padding: 24, textAlign: "center", color: "#94a3b8" }}>Detail artikel tidak tersedia</div>
 
   const imgSrc = article.gambar
@@ -374,8 +374,10 @@ function ArticleDetailBlock(props: any) {
   return (
     <div style={{ padding: 28, border: `1px solid ${T.line}`, borderRadius: 14, background: "#fff", boxShadow: T.shadow, fontFamily: T.font }}>
       <h1 style={{ margin: "0 0 12px", fontSize: 32, fontWeight: 900, color: T.text }}>{article.judul}</h1>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 22, color: "#677386", fontWeight: 700, fontSize: 14 }}>
-        {dateStr && <span><i className="fa fa-calendar" style={{ marginRight: 8 }} />{dateStr}</span>}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 16, marginBottom: 22, color: "#8895a4", fontWeight: 600, fontSize: 14 }}>
+        {dateStr && <span><i className="fa fa-calendar" style={{ marginRight: 6 }} />{dateStr}</span>}
+        <span><i className="fa fa-user" style={{ marginRight: 6 }} />Admin</span>
+        <span><i className="fa fa-eye" style={{ marginRight: 6 }} />{(article.hit || 0).toLocaleString("id-ID")}</span>
       </div>
       {imgSrc && <img src={imgSrc} alt="" style={{ width: "100%", maxHeight: 430, objectFit: "cover", borderRadius: 12, marginBottom: 22 }} />}
       <div dangerouslySetInnerHTML={{ __html: article.isi || "" }} style={{ color: "#334155", fontSize: 16, lineHeight: 1.8 }} />

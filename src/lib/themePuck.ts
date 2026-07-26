@@ -115,7 +115,8 @@ export function starterPuckData(routeKey: string): PuckLayout {
           { type: "SiteHeader", props: {} },
           { type: "Navigation", props: { style: "green" } },
           { type: "SectionHeader", props: { title: "Layanan Mandiri", icon: "fa-users" } },
-          { type: "LoginWidget", props: {} },
+          { type: "RichText", props: { html: "<p>Silakan masuk menggunakan akun warga untuk mengakses layanan mandiri desa.</p>" } },
+          { type: "LoginWidget", props: { } },
           { type: "SiteFooter", props: {} },
         ],
       }
