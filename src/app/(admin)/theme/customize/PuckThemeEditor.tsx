@@ -1,9 +1,20 @@
 "use client"
 
+// Silence React key warnings from Puck internal components (StaticLayerTreeItems, DropZoneEditInternal)
+if (typeof window !== "undefined") {
+  const origError = console.error
+  console.error = (...args: any[]) => {
+    const msg = typeof args[0] === "string" ? args[0] : ""
+    if (msg.includes("Each child in a list should have a unique \"key\" prop")) return
+    origError.apply(console, args)
+  }
+}
+
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { Puck, usePuck, fieldsPlugin } from "@puckeditor/core"
+import { Puck, fieldsPlugin, createUsePuck } from "@puckeditor/core"
 import "@puckeditor/core/dist/index.css"
+const usePuckStore = createUsePuck()
 import { publicPuckComponents, PUCK_CATEGORIES } from "@/components/public/puck/config"
 import { deduplicatePuckLayout } from "@/components/public/puck/blocks"
 import { BUILTIN_PAGES, pagePathFor, starterPuckData } from "@/lib/themePuck"
@@ -49,8 +60,9 @@ function EditorToolbar({
   onActivate: () => void
   saving: boolean
 }) {
-  const { appState, dispatch } = usePuck()
-  const currentViewport = appState.ui.viewports.current.width
+  const appState = usePuckStore((s: any) => s.appState)
+  const dispatch = usePuckStore((s: any) => s.dispatch)
+  const currentViewport = appState?.ui?.viewports?.current?.width
   const activeMode =
     currentViewport === 375 ? "mobile" :
     currentViewport === 768 ? "tablet" : "desktop"
@@ -336,24 +348,24 @@ export default function PuckThemeEditor({
               )
             },
           } as any,
+          header: () => (
+            <EditorToolbar
+              themes={themes}
+              selectedTheme={selectedTheme}
+              onSelectTheme={setSelectedTheme}
+              activeRoute={activeRoute}
+              onSelectRoute={setActiveRoute}
+              pages={pages}
+              onAddPage={handleAddPage}
+              isPreview={isPreview}
+              onTogglePreview={() => setIsPreview(!isPreview)}
+              onSave={handleSave}
+              onRestore={handleRestore}
+              onActivate={handleActivate}
+              saving={saving}
+            />
+          ),
         }}
-        renderHeader={() => (
-          <EditorToolbar
-            themes={themes}
-            selectedTheme={selectedTheme}
-            onSelectTheme={setSelectedTheme}
-            activeRoute={activeRoute}
-            onSelectRoute={setActiveRoute}
-            pages={pages}
-            onAddPage={handleAddPage}
-            isPreview={isPreview}
-            onTogglePreview={() => setIsPreview(!isPreview)}
-            onSave={handleSave}
-            onRestore={handleRestore}
-            onActivate={handleActivate}
-            saving={saving}
-          />
-        )}
       />
 
       {toast && (
