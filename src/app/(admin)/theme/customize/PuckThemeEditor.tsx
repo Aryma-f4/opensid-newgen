@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Puck, usePuck, fieldsPlugin } from "@puckeditor/core"
 import "@puckeditor/core/dist/index.css"
@@ -284,23 +284,29 @@ export default function PuckThemeEditor({
         overrides={{
           fieldTypes: {
             custom: function ColorField({ value, onChange }: any) {
+              const ref = useRef(null)
+              const cur = value || "#000000"
               return (
                 <div style={{ display: "flex", gap: 8, alignItems: "center", padding: "4px 0" }}>
-                  <input
-                    type="color"
-                    value={value || "#000000"}
-                    onChange={(e: any) => { e.stopPropagation(); onChange?.(e.target.value) }}
-                    onBlur={(e: any) => e.stopPropagation()}
-                    onClick={(e: any) => e.stopPropagation()}
-                    onMouseDown={(e: any) => e.stopPropagation()}
-                    style={{ width: 56, height: 42, border: "2px solid #d1d5db", cursor: "pointer", padding: 2, borderRadius: 8, background: "#fff" }}
-                  />
+                  <div style={{ position: "relative", width: 56, height: 42 }}>
+                    <div onClick={() => (ref.current as any)?.click()} style={{ width: 56, height: 42, border: "2px solid #d1d5db", borderRadius: 8, background: cur, cursor: "pointer" }} />
+                    <input
+                      ref={ref}
+                      type="color"
+                      defaultValue={cur}
+                      onChange={() => {}}
+                      onBlur={(e: any) => { if (e.target.value !== cur) onChange?.(e.target.value) }}
+                      style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0, cursor: "pointer" }}
+                    />
+                  </div>
                   <input
                     type="text"
-                    value={value || ""}
-                    onBlur={(e: any) => { e.stopPropagation(); onChange?.(e.target.value) }}
-                    onKeyDown={(e: any) => { if (e.key === "Enter") { e.stopPropagation(); onChange?.(e.target.value) } }}
-                    onChange={(e: any) => { e.stopPropagation() }}
+                    defaultValue={cur.replace("#", "")}
+                    onBlur={(e: any) => {
+                      const v = e.target.value.trim()
+                      if (v && v !== cur.replace("#", "")) onChange?.("#" + (v.startsWith("#") ? v.slice(1) : v))
+                    }}
+                    onKeyDown={(e: any) => { if (e.key === "Enter") e.currentTarget.blur() }}
                     style={{ flex: 1, padding: "8px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontFamily: "monospace", fontSize: 13 }}
                   />
                 </div>
