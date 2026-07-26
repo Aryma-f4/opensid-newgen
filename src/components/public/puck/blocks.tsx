@@ -299,7 +299,8 @@ function FeaturedArticleBlock(props: any) {
 
 function ArticleListBlock(props: any) {
   const ctx = useCtx(props)
-  const { limit = 6, columns = 2, showImage = true, titleSize = 17, excerptSize = 14 } = props
+  const { limit = 6, columns = 2, showImage = "true", titleSize = 17, excerptSize = 14 } = props
+  const show = showImage === true || showImage === "true"
   const articles = (ctx.articles || []).slice(0, limit)
 
   const imgSrc = (g?: string | null) =>
@@ -312,8 +313,8 @@ function ArticleListBlock(props: any) {
   return (
     <div style={{ display: "grid", gridTemplateColumns: `repeat(${columns}, minmax(0,1fr))`, gap: 18, fontFamily: T.font }}>
       {articles.map((a: any) => (
-        <article key={a.id} style={{ display: "grid", gridTemplateColumns: showImage ? "145px minmax(0,1fr)" : "1fr", gap: 16, padding: 12, border: `1px solid ${T.line}`, borderRadius: 14, background: "#fff" }}>
-          {showImage && imgSrc(a.gambar) && <img src={imgSrc(a.gambar)!} alt="" style={{ height: 118, borderRadius: 9, objectFit: "cover" }} />}
+        <article key={a.id} style={{ display: "grid", gridTemplateColumns: show ? "145px minmax(0,1fr)" : "1fr", gap: 16, padding: 12, border: `1px solid ${T.line}`, borderRadius: 14, background: "#fff" }}>
+          {show && imgSrc(a.gambar) && <img src={imgSrc(a.gambar)!} alt="" style={{ height: 118, borderRadius: 9, objectFit: "cover" }} />}
           <div>
             <span style={{ color: T.green, fontSize: 12, fontWeight: 900, textTransform: "uppercase" }}>{a.kategori?.kategori || (typeof a.kategori === "string" ? a.kategori : "Artikel")}</span>
             <h3 style={{ margin: "7px 0", fontSize: titleSize, fontWeight: 900, lineHeight: 1.25 }}><a href={`/artikel/${a.slug || a.id}`} style={{ color: T.text, textDecoration: "none" }}>{a.judul}</a></h3>
@@ -673,10 +674,11 @@ function CategoryItemBlock(props: any) {
 }
 
 function ArticleCardBlock(props: any) {
-  const { image, category = "Artikel", title = "Judul Artikel", excerpt = "", link = "#", imageHeight = 118, imageWidth = 145, titleSize = 17, excerptSize = 14, showImage = true } = props
+  const { image, category = "Artikel", title = "Judul Artikel", excerpt = "", link = "#", imageHeight = 118, imageWidth = 145, titleSize = 17, excerptSize = 14, showImage = "true" } = props
+  const show = showImage === true || showImage === "true"
   return (
-    <article style={{ display: "grid", gridTemplateColumns: showImage ? `${imageWidth}px minmax(0,1fr)` : "1fr", gap: 16, padding: 12, border: `1px solid ${T.line}`, borderRadius: 14, background: "#fff", fontFamily: T.font }}>
-      {showImage && (
+    <article style={{ display: "grid", gridTemplateColumns: show ? `${imageWidth}px minmax(0,1fr)` : "1fr", gap: 16, padding: 12, border: `1px solid ${T.line}`, borderRadius: 14, background: "#fff", fontFamily: T.font }}>
+      {show && (
         image
           ? <img src={image} alt="" style={{ height: imageHeight, borderRadius: 9, objectFit: "cover", width: "100%" }} />
           : <div style={{ height: imageHeight, borderRadius: 9, background: "#f0f0f0", display: "flex", alignItems: "center", justifyContent: "center", color: "#999" }}>No Image</div>
@@ -858,7 +860,7 @@ export const BLOCK_FIELDS: Record<string, { label: string; fields: any[] }> = {
     fields: [
       { name: "limit", label: "Jumlah", type: "number" as const, defaultValue: 6 },
       { name: "columns", label: "Kolom", type: "number" as const, defaultValue: 2 },
-      { name: "showImage", label: "Tampilkan Gambar", type: "checkbox" as const },
+      { name: "showImage", label: "Tampilkan Gambar", type: "select" as const, options: [{ value: "true", label: "Ya" }, { value: "", label: "Tidak" }], defaultValue: "true" },
       { name: "titleSize", label: "Ukuran Judul (px)", type: "number" as const, defaultValue: 17 },
       { name: "excerptSize", label: "Ukuran Ringkasan (px)", type: "number" as const, defaultValue: 14 },
     ],
