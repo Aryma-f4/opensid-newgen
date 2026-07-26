@@ -106,6 +106,10 @@ export default function PuckThemeEditor({
     }
   }
 
+  // Extract Puck sub-components at module level (they exist at runtime but not in types)
+  const PuckPreview = (Puck as any).Preview
+  const PuckFields = (Puck as any).Fields
+
   const isPuckTheme = selectedTheme?.renderer === "puck"
   const ctx = editorPreviewContext(activeRoute)
 
@@ -203,8 +207,18 @@ export default function PuckThemeEditor({
             setPuckData(data)
             await handleSave()
           }}
-          plugins={[blocksPlugin(), fieldsPlugin(), outlinePlugin()]}
-        />
+        >
+          <PuckPreview>
+            <div style={{
+              maxWidth: viewMode === "mobile" ? 375 : viewMode === "tablet" ? 768 : "100%",
+              margin: "0 auto", minHeight: "100%", background: "#fff",
+              boxShadow: viewMode !== "desktop" ? "0 0 20px rgba(0,0,0,.1)" : "none",
+            }}>
+              <Render {...{ config: { components: publicPuckComponents }, data: puckData, context: ctx } as any} />
+            </div>
+          </PuckPreview>
+          <PuckFields />
+        </Puck>
       </div>
 
       {toast && (
