@@ -26,6 +26,18 @@ export async function savePuckLayout(input: {
     throw new Error("Route key tidak valid")
   }
 
+  // Deduplicate SiteHeader/SiteFooter before saving
+  const raw: any = input.data
+  if (raw?.content && Array.isArray(raw.content)) {
+    const seen = new Set<string>()
+    raw.content = raw.content.filter((b: any) => {
+      if (b?.type === "SiteFooter" || b?.type === "SiteHeader") {
+        if (seen.has(b.type)) return false
+        seen.add(b.type)
+      }
+      return true
+    })
+  }
   const parsed = parsePuckLayout(input.data)
   const themeId = BigInt(input.themeId)
 
