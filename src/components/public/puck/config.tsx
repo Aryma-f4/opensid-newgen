@@ -1,14 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { BLOCK_RENDERERS, BLOCK_FIELDS, buildWrapperStyle } from "./blocks"
 
 // ── Color field renderer (uses HTML5 input type=color) ───────────────
 function ColorFieldRender({ value, onChange }: { value?: string; onChange?: (v: string) => void }) {
-  const [val, setVal] = useState(value || "#000000")
+  const [val, setVal] = useState("")
+  useEffect(() => { setVal(value || "#000000") }, [value])
   return (
     <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-      <input type="color" value={val} onChange={(e) => { setVal(e.target.value); onChange?.(e.target.value) }} style={{ width: 40, height: 36, border: 0, cursor: "pointer", padding: 0 }} />
+      <input type="color" value={val} onChange={(e) => { setVal(e.target.value); onChange?.(e.target.value) }} style={{ width: 40, height: 36, border: 0, cursor: "pointer", padding: 0, borderRadius: 4 }} />
       <input type="text" value={val} onChange={(e) => { setVal(e.target.value); onChange?.(e.target.value) }} style={{ flex: 1, padding: "4px 8px", borderRadius: 4, border: "1px solid #d1d5db", fontFamily: "monospace", fontSize: 12 }} />
     </div>
   )
