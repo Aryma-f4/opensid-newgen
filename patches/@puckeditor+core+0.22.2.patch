@@ -1,0 +1,13 @@
+diff --git a/node_modules/@puckeditor/core/dist/index.js b/node_modules/@puckeditor/core/dist/index.js
+index 28420ee..16875c1 100644
+--- a/node_modules/@puckeditor/core/dist/index.js
++++ b/node_modules/@puckeditor/core/dist/index.js
+@@ -15233,7 +15233,7 @@ var Layer = (0, import_react81.forwardRef)(function Layer2({
+                 }
+               ),
+               /* @__PURE__ */ (0, import_jsx_runtime77.jsxs)("div", { className: getClassNameLayer("title"), children: [
+-                /* @__PURE__ */ (0, import_jsx_runtime77.jsx)("div", { className: getClassNameLayer("icon"), children: node.componentType === "Text" || node.componentType === "Heading" ? /* @__PURE__ */ (0, import_jsx_runtime77.jsx)(Type, { size: "16" }) : /* @__PURE__ */ (0, import_jsx_runtime77.jsx)(LayoutGrid, { size: "16" }) }),
++                /* @__PURE__ */ (0, import_jsx_runtime77.jsx)("div", { className: getClassNameLayer("icon"), children: node?.componentType === "Text" || node?.componentType === "Heading" ? /* @__PURE__ */ (0, import_jsx_runtime77.jsx)(Type, { size: "16" }) : /* @__PURE__ */ (0, import_jsx_runtime77.jsx)(LayoutGrid, { size: "16" }) }),
+                 /* @__PURE__ */ (0, import_jsx_runtime77.jsx)("div", { className: getClassNameLayer("name"), children: node.label })
+               ] })
+             ]
